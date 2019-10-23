@@ -74,9 +74,7 @@ const ordersToUIOrdersWithOrdersInfo = (
 ): UIOrder[] => {
     if (orderAndTraderInfos.length !== orders.length) {
         throw new Error(
-            `AssertionError: Orders info length does not match orders length: ${orderAndTraderInfos.length} !== ${
-                orders.length
-            }`,
+            `AssertionError: Orders info length does not match orders length: ${orderAndTraderInfos.length} !== ${orders.length}`,
         );
     }
 

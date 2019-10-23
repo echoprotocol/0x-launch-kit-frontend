@@ -1,43 +1,53 @@
 import { Web3Wrapper } from '@0x/web3-wrapper';
 
 import { sleep } from '../util/sleep';
+const Web3 = require('web3');
+const EchoWeb3 = require('echo-web3').default;
+const { BridgeProvider } = require('echo-web3');
 
+let isFirstSwitchAccount = true;
+let isFirstSwitchNetwork = true;
 let web3Wrapper: Web3Wrapper | null = null;
+const WrappedWeb3 = EchoWeb3(Web3);
 
 export const isMetamaskInstalled = (): boolean => {
-    const { ethereum, web3 } = window;
-    return ethereum || web3;
+    const { echojslib } = window as any;
+    return echojslib || echojslib.isEchoBridge;
 };
 
 export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
-    const { ethereum, web3, location } = window;
+    const { location } = window;
+    const { echojslib } = window as any;
 
     if (web3Wrapper) {
         return web3Wrapper;
     }
+    if (echojslib && echojslib.isEchoBridge) {
+        const bridgeProvider = new BridgeProvider();
+        const web3 = new WrappedWeb3(bridgeProvider);
 
-    if (ethereum) {
-        try {
-            web3Wrapper = new Web3Wrapper(ethereum);
-            // Request account access if needed
-            await ethereum.enable();
+        await bridgeProvider.init();
+        await web3.currentProvider.enable();
 
-            // Subscriptions register
-            ethereum.on('accountsChanged', async (accounts: []) => {
-                // Reload to avoid MetaMask bug: "MetaMask - RPC Error: Internal JSON-RPC"
-                location.reload();
-            });
-            ethereum.on('networkChanged', async (network: number) => {
-                location.reload();
-            });
-
-            return web3Wrapper;
-        } catch (error) {
-            // The user denied account access
-            return null;
-        }
-    } else if (web3) {
+        // Request account access if needed
         web3Wrapper = new Web3Wrapper(web3.currentProvider);
+
+        // Subscriptions register
+        echojslib.extension.subscribeSwitchAccount(() => {
+            if (!isFirstSwitchAccount) {
+                location.reload();
+            } else {
+                isFirstSwitchAccount = false;
+            }
+        });
+        echojslib.extension.subscribeSwitchNetwork(() => {
+            if (!isFirstSwitchAccount) {
+                location.reload();
+            } else {
+                isFirstSwitchNetwork = false;
+            }
+        });
+
         return web3Wrapper;
     } else {
         //  The user does not have metamask installed
