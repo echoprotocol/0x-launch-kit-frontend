@@ -35,7 +35,8 @@
         "sanitize.css": "^8.0.0",
         "styled-components": "^4.1.3",
         "typesafe-actions": "^3.0.0",
-        "web3": "0.20.7"
+        "web3": "0.20.7",
+        "echo-web3": "0.1.0"
     },
     "scripts": {
         "start": "cross-env PORT=3003 react-scripts start",

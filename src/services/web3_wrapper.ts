@@ -1,9 +1,10 @@
 import { Web3Wrapper } from '@0x/web3-wrapper';
 
+// @ts-ignore
+import EchoWeb3, { BridgeProvider } from 'echo-web3';
+// @ts-ignore
+import * as Web3 from 'web3';
 import { sleep } from '../util/sleep';
-const Web3 = require('web3');
-const EchoWeb3 = require('echo-web3').default;
-const { BridgeProvider } = require('echo-web3');
 
 let isFirstSwitchAccount = true;
 let isFirstSwitchNetwork = true;
@@ -41,7 +42,7 @@ export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
             }
         });
         echojslib.extension.subscribeSwitchNetwork(() => {
-            if (!isFirstSwitchAccount) {
+            if (!isFirstSwitchNetwork) {
                 location.reload();
             } else {
                 isFirstSwitchNetwork = false;
