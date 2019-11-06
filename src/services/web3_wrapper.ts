@@ -24,7 +24,6 @@ export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
 
     if (web3Wrapper) {
         await echoWeb3Instance.currentProvider.enable();
-        console.log('TCL: web3Wrapper', web3Wrapper);
         return web3Wrapper;
     }
     if (echojslib && echojslib.isEchoBridge) {
@@ -45,6 +44,7 @@ export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
                 if (isAccountWasSet) {
                     location.reload();
                 } else {
+                    // TODO sometimes the echojslib.extension.activeAccount is null
                     isAccountWasSet = true;
                     return resolve(web3Wrapper);
                 }
