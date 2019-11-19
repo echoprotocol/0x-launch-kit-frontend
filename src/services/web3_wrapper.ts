@@ -15,7 +15,7 @@ const WrappedEchoWeb3 = EchoWeb3(Web3);
 
 export const isMetamaskInstalled = (): boolean => {
     const { echojslib } = window as any;
-    return echojslib || echojslib.isEchoBridge;
+    return echojslib || echojslib.isEchoBridge; 
 };
 
 export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
@@ -33,7 +33,7 @@ export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
 
             await bridgeProvider.init();
             await echoWeb3Instance.currentProvider.enable();
-
+            
             // Request account access if needed
             web3Wrapper = new Web3Wrapper(echoWeb3Instance.currentProvider);
             echoWeb3Instance = echoWeb3Instance;
@@ -64,7 +64,7 @@ export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
         });
     } else {
         //  The user does not have metamask installed
-        return null;
+        return null
     }
 };
 

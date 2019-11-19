@@ -1,19 +1,25 @@
-FROM  node:11-alpine as yarn-install
+# Stage 1
+FROM  node:8-alpine as react-build
 WORKDIR /app
-COPY package.json yarn.lock ./
+
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache --virtual build-dependencies bash git openssh python make g++ && \
-    yarn --no-cache && \
-    apk del build-dependencies && \
-    yarn cache clean
+    apk add --no-cache --virtual build-dependencies bash git openssh python make g++ musl-dev \
+    gcc python3-dev libusb-dev eudev-dev linux-headers libc-dev
+RUN git clone https://github.com/echoprotocol/0x-monorepo.git
 
-# Stage 1
-FROM  node:11-alpine as react-build
-WORKDIR /app
-COPY --from=yarn-install /app/node_modules /app/node_modules
 COPY . .
+
+RUN cd ./0x-monorepo && yarn install && yarn build && yarn workspaces run link
+RUN yarn link 0x.js @0x/web3-wrapper @0x/connect @0x/order-utils @0x/typescript-typings
+RUN yarn cache clean
+
+RUN yarn --no-cache
+RUN yarn remove babel-jest
+RUN yarn add babel-jest@24.7.1
 RUN yarn build
+
+RUN apk del build-dependencies
 
 # Stage 2 - the production environment
 FROM nginx:alpine

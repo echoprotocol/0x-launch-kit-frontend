@@ -15,6 +15,8 @@ export interface TabItem {
 }
 
 export enum Network {
+    Mainnet = 1,
+    Testnet = 3,
     Devnet = 4,
 }
 
