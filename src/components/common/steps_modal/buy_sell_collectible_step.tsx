@@ -67,7 +67,7 @@ class BuySellCollectibleStep extends React.Component<Props, State> {
 
         const title = `${isBuy ? 'Buying' : 'Selling'} ${collectibleName}`;
 
-        const confirmCaption = `Confirm on Metamask to submit ${isBuy ? 'purchase' : 'sell'} for ${collectibleName}.`;
+        const confirmCaption = `Confirm on Bridge to submit ${isBuy ? 'purchase' : 'sell'} for ${collectibleName}.`;
         const loadingCaption = `Processing ${isBuy ? 'purchase' : 'sale'} of ${collectibleName}.`;
         const doneCaption = isBuy
             ? `Purchase of ${collectibleName} Successful!`

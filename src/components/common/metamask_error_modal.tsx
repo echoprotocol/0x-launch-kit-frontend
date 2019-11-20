@@ -92,14 +92,14 @@ const MetamaskErrorModalContainer: React.FC<Props> = props => {
 
     const metamaskNotInstalledContent = (
         <>
-            <ModalTitle>Install Metamask</ModalTitle>
+            <ModalTitle>Install Bridge</ModalTitle>
             <IconContainer>
                 <InstallMetamaskSvg />
             </IconContainer>
-            <ModalText>Please install the MetaMask wallet extension from the Chrome Store.</ModalText>
+            <ModalText>Please install the Bridge wallet extension from the Chrome Store.</ModalText>
             <ModalText>
-                <ModalTextLink href="https://metamask.io/" target="_blank">
-                    What is MetaMask?
+                <ModalTextLink href="https://chrome.google.com/webstore/detail/echo-bridge/ginklfodpcgldnicehmlpehfmgjhbdcl" target="_blank">
+                    What is Bridge?
                 </ModalTextLink>
             </ModalText>
             <ButtonStyled onClick={getMetamask} variant={ButtonVariant.Tertiary}>
@@ -110,14 +110,14 @@ const MetamaskErrorModalContainer: React.FC<Props> = props => {
 
     const metamaskNoPermissionsContent = (
         <>
-            <ModalTitle>Connect Metamask</ModalTitle>
+            <ModalTitle>Connect Bridge</ModalTitle>
             <IconContainer>
                 <InstallMetamaskSvg />
             </IconContainer>
             <ModalText>Please accept the MetaMask wallet permissions in order to access your wallet.</ModalText>
             <ModalText>
-                <ModalTextLink href="https://metamask.io/" target="_blank">
-                    What is MetaMask?
+                <ModalTextLink href="https://chrome.google.com/webstore/detail/echo-bridge/ginklfodpcgldnicehmlpehfmgjhbdcl" target="_blank">
+                    What is Bridge?
                 </ModalTextLink>
             </ModalText>
             <ButtonStyled onClick={connectWallet} variant={ButtonVariant.Tertiary}>

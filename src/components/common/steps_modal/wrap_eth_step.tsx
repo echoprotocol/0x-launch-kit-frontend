@@ -87,7 +87,7 @@ class WrapEthStep extends React.Component<Props, State> {
 
         const title = `Convert ${convertingFrom}`;
 
-        const confirmCaption = `Confirm on Metamask to convert ${ethAmount} ${convertingFrom} into ${convertingTo}.`;
+        const confirmCaption = `Confirm on Bridge to convert ${ethAmount} ${convertingFrom} into ${convertingTo}.`;
         const loadingCaption = buildMessage('Converting');
         const doneCaption = buildMessage('Converted');
         const loadingFooterCaption = `Waiting for confirmation....`;

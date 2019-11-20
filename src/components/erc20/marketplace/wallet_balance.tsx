@@ -169,7 +169,7 @@ const simplifiedTextBoxSmall = () => {
 };
 
 const getWalletName = () => {
-    return 'MetaMask';
+    return 'Bridge';
 };
 
 const getWallet = (web3State: Web3State) => {
@@ -283,7 +283,7 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.NotInstalled) {
             content = (
                 <>
-                    <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
+                    <WalletErrorText>Install Bridge wallet to make trades.</WalletErrorText>
                     <ButtonStyled variant={ButtonVariant.Tertiary} onClick={openMetamaskExtensionUrl}>
                         {errorsWallet.mmGetExtension}
                     </ButtonStyled>

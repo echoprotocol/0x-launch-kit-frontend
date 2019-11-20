@@ -29,9 +29,9 @@ export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 4;
 export const UI_DECIMALS_DISPLAYED_PRICE_ETH = 7;
 export const UI_GENERAL_TITLE = 'Launch Kit';
 
-export const METAMASK_EXTENSION_URL = 'https://metamask.io/';
+export const METAMASK_EXTENSION_URL = 'https://chrome.google.com/webstore/detail/echo-bridge/ginklfodpcgldnicehmlpehfmgjhbdcl';
 export const METAMASK_CHROME_EXTENSION_DOWNLOAD_URL =
-    'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn';
+    'https://chrome.google.com/webstore/detail/echo-bridge/ginklfodpcgldnicehmlpehfmgjhbdcl';
 
 // Default value is enabled, 0 is disabled
 export const UI_UPDATE_CHECK_INTERVAL: number = process.env.REACT_APP_UI_UPDATE_CHECK_INTERVAL

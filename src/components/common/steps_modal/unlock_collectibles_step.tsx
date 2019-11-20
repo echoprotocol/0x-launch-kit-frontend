@@ -33,7 +33,7 @@ class UnlockCollectiblesStep extends React.Component<Props> {
         const { isUnlocked, collectible } = step;
         const collectibleName = collectible.name;
         const title = `Selling ${collectibleName}`;
-        const confirmCaption = `Confirm on Metamask to ${
+        const confirmCaption = `Confirm on Bridge to ${
             isUnlocked ? 'lock' : 'unlock'
         } ${collectibleName} for trading on 0x.`;
         const loadingCaption = isUnlocked

@@ -264,7 +264,7 @@ export interface GasInfo {
 }
 
 export enum ModalDisplay {
-    InstallMetamask = 'INSTALL_METAMASK',
+    InstallMetamask = 'INSTALL_BRIDGE',
     EnablePermissions = 'ACCEPT_PERMISSIONS',
 }
 

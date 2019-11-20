@@ -7,9 +7,9 @@ export const errorsBuySell = {
 
 export const errorsWallet = {
     mmLoading: 'Please wait while we load your wallet',
-    mmConnect: 'Click to Connect MetaMask',
-    mmLocked: 'Metamask Locked',
-    mmNotInstalled: 'Metamask not installed',
+    mmConnect: 'Click to Connect Bridge',
+    mmLocked: 'Bridge Locked',
+    mmNotInstalled: 'Bridge not installed',
     mmGetExtension: 'Get Chrome Extension ',
     mmWrongNetwork: `Wrong network: switch to ${NETWORK_NAME}`,
 };
