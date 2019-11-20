@@ -319,6 +319,8 @@ const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
 
         if (web3Wrapper) {
             const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
+            const [echoAccount] = await (window as any).echojslib.extension.getAccounts();
+            const { name: echoAccountName} = echoAccount
             const knownTokens = getKnownTokens();
             const wethToken = knownTokens.getWethToken();
             const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
@@ -326,6 +328,7 @@ const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
 
             await dispatch(
                 initializeBlockchainData({
+                    echoAccountName,
                     ethAccount,
                     web3State: Web3State.Done,
                     ethBalance,

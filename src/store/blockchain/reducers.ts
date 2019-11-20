@@ -7,6 +7,7 @@ import * as actions from '../actions';
 import { RootAction } from '../reducers';
 
 const initialBlockchainState: BlockchainState = {
+    echoAccountName: '',
     ethAccount: '',
     web3State: Web3State.Loading,
     tokenBalances: [],

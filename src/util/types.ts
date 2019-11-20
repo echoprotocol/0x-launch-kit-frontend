@@ -51,6 +51,7 @@ export enum Web3State {
 }
 
 export interface BlockchainState {
+    readonly echoAccountName: string;
     readonly ethAccount: string;
     readonly web3State: Web3State;
     readonly tokenBalances: TokenBalance[];

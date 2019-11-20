@@ -16,6 +16,7 @@ import {
 } from '../util/types';
 import { mergeByPrice } from '../util/ui_orders';
 
+export const getEchoAccountName = (state: StoreState) => state.blockchain.echoAccountName;
 export const getEthAccount = (state: StoreState) => state.blockchain.ethAccount;
 export const getTokenBalances = (state: StoreState) => state.blockchain.tokenBalances;
 export const getWeb3State = (state: StoreState) => state.blockchain.web3State;

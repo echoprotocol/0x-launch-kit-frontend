@@ -3,8 +3,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { getEthAccount } from '../../../store/selectors';
-import { truncateAddress } from '../../../util/number_utils';
+import { getEthAccount, getEchoAccountName } from '../../../store/selectors';
 import { StoreState } from '../../../util/types';
 import { WalletConnectionStatusContainer } from '../../account/wallet_connection_status';
 import { CardBase } from '../../common/card_base';
@@ -14,6 +13,7 @@ interface OwnProps extends HTMLAttributes<HTMLSpanElement> {}
 
 interface StateProps {
     ethAccount: string;
+    echoAccountName: string;
 }
 
 type Props = StateProps & OwnProps;
@@ -33,8 +33,8 @@ const DropdownItems = styled(CardBase)`
 
 class WalletConnectionContent extends React.PureComponent<Props> {
     public render = () => {
-        const { ethAccount, ...restProps } = this.props;
-        const ethAccountText = ethAccount ? `${truncateAddress(ethAccount)}` : 'Not connected';
+        const { ethAccount, echoAccountName, ...restProps } = this.props;
+        const ethAccountText = ethAccount ? echoAccountName: 'Not connected';
 
         const content = (
             <DropdownItems>
@@ -60,6 +60,7 @@ class WalletConnectionContent extends React.PureComponent<Props> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         ethAccount: getEthAccount(state),
+        echoAccountName: getEchoAccountName(state),
     };
 };
 
