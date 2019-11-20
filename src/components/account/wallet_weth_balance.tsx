@@ -201,7 +201,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         <LabelWrapper>
                             <Label>wETH</Label>{' '}
                             <Tooltip
-                                description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time."
+                                description="ECHO cannot be traded with other tokens directly.<br />You need to convert it to WECHO first.<br />WECHO can be converted back to ECHO at any time."
                                 iconType={IconType.Fill}
                             />
                         </LabelWrapper>
@@ -227,13 +227,13 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
         return (
             <>
-                <Card title={inDropdown ? '' : 'ETH / wETH Balances'} className={className}>
+                <Card title={inDropdown ? '' : 'ECHO / wECHO Balances'} className={className}>
                     <Content>{content}</Content>
                 </Card>
                 {inDropdown ? null : (
                     <Note>
-                        wETH is used for trades on 0x
-                        <br />1 wETH = 1 ETH
+                        wECHO is used for trades on 0x
+                        <br />1 wECHO = 1 ECHO
                     </Note>
                 )}
             </>

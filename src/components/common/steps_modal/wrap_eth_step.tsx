@@ -68,8 +68,8 @@ class WrapEthStep extends React.Component<Props, State> {
         );
 
         const ethToWeth = amount.isGreaterThan(0);
-        const convertingFrom = ethToWeth ? 'ETH' : 'wETH';
-        const convertingTo = ethToWeth ? 'wETH' : 'ETH';
+        const convertingFrom = ethToWeth ? 'ECHO' : 'wECHO';
+        const convertingTo = ethToWeth ? 'wECHO' : 'ECHO';
 
         const isOrder = context === 'order';
 
@@ -137,11 +137,11 @@ class WrapEthStep extends React.Component<Props, State> {
                 const currentEthAmount = tokenAmountInUnits(ethBalance, ETH_DECIMALS);
                 const ethNeeded = tokenAmountInUnits(amount, ETH_DECIMALS);
                 exception = new InsufficientEthDepositBalanceException(currentEthAmount, ethNeeded);
-                errorCaption = `You have ${currentEthAmount} ETH but you need ${ethNeeded} ETH to make this operation`;
+                errorCaption = `You have ${currentEthAmount} ECHO but you need ${ethNeeded} ECHO to make this operation`;
             } else if (err instanceof ConvertBalanceMustNotBeEqualException) {
                 exception = err;
                 errorCaption =
-                    'An unexpected error happened: tryed to wrap ETH so that the resulting ETH amount stays the same';
+                    'An unexpected error happened: tryed to wrap ECHO so that the resulting ECHO amount stays the same';
             }
 
             // Enable convert button: some conditions are dealt with exceptions and we don't

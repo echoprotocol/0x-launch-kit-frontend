@@ -9,7 +9,7 @@
             "primaryColor": "#333333",
             "icon": "assets/icons/zrx.svg",
             "addresses": {
-                "3": "0x0100000000000000000000000000000000000042",
+                "3": "0x010000000000000000000000000000000000006a",
                 "4": "0x0100000000000000000000000000000000000003",
                 "228": "0x010000000000000000000000000000000000005d"
             },
@@ -17,12 +17,12 @@
             "displayDecimals": 2
         },
         {
-            "symbol": "weth",
-            "name": "Wrapped Ether",
-            "primaryColor": "#3333ff",
-            "icon": "assets/icons/weth.svg",
+            "symbol": "wecho",
+            "name": "Wrapped ECHO",
+            "primaryColor": "#333333",
+            "icon": "assets/icons/wecho.svg",
             "addresses": {
-                "3": "0x0100000000000000000000000000000000000043",
+                "3": "0x010000000000000000000000000000000000006b",
                 "4": "0x0100000000000000000000000000000000000004",
                 "228": "0x010000000000000000000000000000000000005e"
             },
@@ -32,14 +32,14 @@
     ],
     "pairs": [
         {
-            "base": "weth",
+            "base": "wecho",
             "quote": "zrx"
         }
     ],
     "marketFilters": [
         {
-            "text": "ETH",
-            "value": "weth"
+            "text": "ECHO",
+            "value": "wecho"
         }
     ]
 }

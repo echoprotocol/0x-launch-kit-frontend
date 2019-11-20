@@ -4,9 +4,9 @@ import { TokenMetaData } from '../common/tokens_meta_data';
 import { Token } from './types';
 
 export const getWethTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenMetaData[]): Token => {
-    const tokenMetaData = tokensMetaData.find(t => t.symbol === 'weth');
+    const tokenMetaData = tokensMetaData.find(t => t.symbol === 'wecho');
     if (!tokenMetaData) {
-        throw new Error('WETH Token MetaData not found');
+        throw new Error('wecho Token MetaData not found');
     }
     return {
         address: tokenMetaData.addresses[NETWORK_ID],

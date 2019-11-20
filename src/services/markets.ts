@@ -13,5 +13,5 @@ export const getMarketPriceEther = async (): Promise<BigNumber> => {
         }
     }
 
-    return Promise.reject('Could not get ETH price');
+    return Promise.reject('Could not get ECHO price');
 };

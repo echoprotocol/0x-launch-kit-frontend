@@ -271,7 +271,7 @@ class WethModal extends React.Component<Props, State> {
             <Modal {...restProps}>
                 <CloseModalButton onClick={this._closeModal} />
                 <Title marginBottomSmall={ethInUsd}>Available Balance</Title>
-                {ethInUsd ? <ETHPrice>1 ETH ≈ ${ethInUsd.toFixed(2)} </ETHPrice> : null}
+                {ethInUsd ? <ETHPrice>1 ECHO ≈ ${ethInUsd.toFixed(2)} </ETHPrice> : null}
                 <EthBoxes>
                     <EthBox boxType={ETHBoxType.Eth}>
                         {editing === Editing.Eth ? (
@@ -325,7 +325,7 @@ class WethModal extends React.Component<Props, State> {
                         )}
                         <EthBoxUnit>wETH</EthBoxUnit>
                         <TooltipStyled>
-                            <Tooltip description="ETH cannot be traded with other tokens directly.<br />You need to convert it to WETH first.<br />WETH can be converted back to ETH at any time." />
+                            <Tooltip description="ECHO cannot be traded with other tokens directly.<br />You need to convert it to WECHO first.<br />WECHO can be converted back to ECHO at any time." />
                         </TooltipStyled>
                     </EthBox>
                 </EthBoxes>
@@ -345,9 +345,9 @@ class WethModal extends React.Component<Props, State> {
                     value={selectedWethStr}
                 />
                 <SetMinEthWrapper hideWarning={isInsufficientEth ? false : true}>
-                    ETH required for fees.&nbsp;
+                    ECHO required for fees.&nbsp;
                     <SetMinEthButton href="" onClick={this._setMinEth}>
-                        0.05 ETH Recommended
+                        0.05 ECHO Recommended
                     </SetMinEthButton>
                 </SetMinEthWrapper>
                 <Button onClick={this.submit} disabled={isDisabled} variant={ButtonVariant.Balance}>

@@ -143,7 +143,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                     />
                 </TokenTD>
                 <CustomTDTokenName styles={{ borderBottom: true }}>
-                    <TokenName>ETH Total</TokenName> {` (ETH + wETH)`}
+                    <TokenName>ECHO Total</TokenName> {` (ECHO + wECHO)`}
                 </CustomTDTokenName>
                 <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
                     {formattedTotalEthBalance}
