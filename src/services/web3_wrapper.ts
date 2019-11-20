@@ -15,7 +15,7 @@ const WrappedEchoWeb3 = EchoWeb3(Web3);
 
 export const isMetamaskInstalled = (): boolean => {
     const { echojslib } = window as any;
-    return echojslib || echojslib.isEchoBridge; 
+    return echojslib && echojslib.isEchoBridge; 
 };
 
 export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {

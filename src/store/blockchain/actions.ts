@@ -226,7 +226,13 @@ export const setConnectedUserNotifications: ThunkCreator<Promise<any>> = (ethAcc
         const lastBlockChecked = localStorage.getLastBlockChecked(ethAccount);
 
         const fromBlock =
-            lastBlockChecked !== null ? lastBlockChecked + 1 : Math.max(blockNumber - START_BLOCK_LIMIT, 1);
+            lastBlockChecked !== null ? 
+                lastBlockChecked === blockNumber?
+                    lastBlockChecked 
+                    :
+                    lastBlockChecked + 1 
+                : 
+                Math.max(blockNumber - START_BLOCK_LIMIT, 1);
 
         const toBlock = blockNumber;
 
