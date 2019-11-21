@@ -28,12 +28,31 @@
             },
             "decimals": 18,
             "displayDecimals": 2
+        },
+        {
+            "symbol": "rep",
+            "name": "Augur token",
+            "primaryColor": "#333333",
+            "icon": "assets/icons/rep.svg",
+            "addresses": {
+                "3": "0x010000000000000000000000000000000000006d"
+            },
+            "decimals": 18,
+            "displayDecimals": 2
         }
     ],
     "pairs": [
         {
             "base": "zrx",
             "quote": "wecho"
+        },
+        {
+            "base": "wecho",
+            "quote": "rep"
+        },
+        {
+            "base": "rep",
+            "quote": "zrx"
         }
     ],
     "marketFilters": [
