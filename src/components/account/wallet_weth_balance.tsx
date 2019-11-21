@@ -190,7 +190,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
             content = (
                 <>
                     <Row>
-                        <Label>ETH</Label>
+                        <Label>ECHO</Label>
                         <Value>{formattedEth}</Value>
                     </Row>
                     <Button disabled={isButtonConvertDisable} onClick={this.openModal}>
@@ -199,7 +199,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                     </Button>
                     <Row>
                         <LabelWrapper>
-                            <Label>wETH</Label>{' '}
+                            <Label>wECHO</Label>{' '}
                             <Tooltip
                                 description="ECHO cannot be traded with other tokens directly.<br />You need to convert it to WECHO first.<br />WECHO can be converted back to ECHO at any time."
                                 iconType={IconType.Fill}
@@ -209,7 +209,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                     </Row>
                     <Row>
                         <Label>Total Value</Label>
-                        <Value>{formattedTotalEth} ETH</Value>
+                        <Value>{formattedTotalEth} ECHO</Value>
                     </Row>
                     <WethModal
                         ethInUsd={ethInUsd}

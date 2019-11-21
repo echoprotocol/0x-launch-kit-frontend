@@ -32,8 +32,8 @@
     ],
     "pairs": [
         {
-            "base": "wecho",
-            "quote": "zrx"
+            "base": "zrx",
+            "quote": "wecho"
         }
     ],
     "marketFilters": [
