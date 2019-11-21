@@ -6,7 +6,7 @@ import EchoWeb3, { BridgeProvider } from 'echo-web3';
 import * as Web3 from 'web3';
 import { sleep } from '../util/sleep';
 
-let isAccountWasSet = false;
+let isFirstSwitchAccount = true;
 let isFirstSwitchNetwork = true;
 
 let echoWeb3Instance: EchoWeb3 | null = null;
@@ -15,10 +15,14 @@ const WrappedEchoWeb3 = EchoWeb3(Web3);
 
 export const isMetamaskInstalled = (): boolean => {
     const { echojslib } = window as any;
-    return echojslib && echojslib.isEchoBridge; 
+    return echojslib && echojslib.isEchoBridge;
 };
 
-export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
+export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | undefined> => {
+    while (!(window as any).echojslib) {
+        await sleep(50);
+    }
+
     const { location } = window;
     const { echojslib } = window as any;
 
@@ -26,45 +30,38 @@ export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
         await echoWeb3Instance.currentProvider.enable();
         return web3Wrapper;
     }
+
     if (echojslib && echojslib.isEchoBridge) {
-        return new Promise(async (resolve, reject) => {
-            const bridgeProvider = new BridgeProvider();
-            echoWeb3Instance = new WrappedEchoWeb3(bridgeProvider);
+        const bridgeProvider = new BridgeProvider();
+        echoWeb3Instance = new WrappedEchoWeb3(bridgeProvider);
 
-            await bridgeProvider.init();
-            await echoWeb3Instance.currentProvider.enable();
-            
-            // Request account access if needed
-            web3Wrapper = new Web3Wrapper(echoWeb3Instance.currentProvider);
-            echoWeb3Instance = echoWeb3Instance;
+        await bridgeProvider.init();
+        await echoWeb3Instance.currentProvider.enable();
 
-            // Subscriptions register
-            echojslib.extension.subscribeSwitchAccount(() => {
-                // waiting the first setting of an account before using of web3
-                if (isAccountWasSet) {
-                    location.reload();
-                } else {
-                    // TODO sometimes the echojslib.extension.activeAccount is null
-                    isAccountWasSet = true;
-                    return resolve(web3Wrapper);
-                }
-            });
-            echojslib.extension.subscribeSwitchNetwork(() => {
-                if (!isFirstSwitchNetwork) {
-                    location.reload();
-                } else {
-                    isFirstSwitchNetwork = false;
-                }
-            });
+        // Request account access if needed
+        web3Wrapper = new Web3Wrapper(echoWeb3Instance.currentProvider);
+        echoWeb3Instance = echoWeb3Instance;
 
-            if (isAccountWasSet) {
-                // account has been set, therefore we can return of web3
-                return resolve(web3Wrapper);
+        // Subscriptions register
+        echojslib.extension.subscribeSwitchAccount(() => {
+            // waiting the first setting of an account before using of web3
+            if (isFirstSwitchAccount) {
+                isFirstSwitchAccount = false;
+            } else {
+                location.reload();
             }
         });
-    } else {
-        //  The user does not have metamask installed
-        return null
+
+        echojslib.extension.subscribeSwitchNetwork(() => {
+            if (isFirstSwitchNetwork) {
+                isFirstSwitchNetwork = false;
+            } else {
+                location.reload();
+            }
+        });
+
+        return web3Wrapper;
+
     }
 };
 

@@ -291,6 +291,7 @@ export const setConnectedUserNotifications: ThunkCreator<Promise<any>> = (ethAcc
 
 export const initWallet: ThunkCreator<Promise<any>> = () => {
     return async (dispatch, getState) => {
+       
         dispatch(setWeb3State(Web3State.Loading));
         const state = getState();
         const currentMarketPlace = getCurrentMarketPlace(state);
@@ -318,9 +319,15 @@ const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
         const web3Wrapper = await initializeWeb3Wrapper();
 
         if (web3Wrapper) {
+            const networkId = await web3Wrapper.getNetworkIdAsync();
+            if (networkId !== NETWORK_ID) {
+                dispatch(setWeb3State(Web3State.Error));
+                throw Web3State.Error
+            }
+
             const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
             const [echoAccount] = await (window as any).echojslib.extension.getAccounts();
-            const { name: echoAccountName} = echoAccount
+            const { name: echoAccountName = ''} = echoAccount || {};
             const knownTokens = getKnownTokens();
             const wethToken = knownTokens.getWethToken();
             const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
@@ -349,10 +356,6 @@ const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
             // tslint:disable-next-line:no-floating-promises
             dispatch(updateMarketPriceEther());
 
-            const networkId = await web3Wrapper.getNetworkIdAsync();
-            if (networkId !== NETWORK_ID) {
-                dispatch(setWeb3State(Web3State.Error));
-            }
         }
     };
 };
