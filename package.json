@@ -27,6 +27,7 @@
         "react-scripts": "3.0.0",
         "react-svg": "^10.0.9",
         "react-timeago": "^4.4.0",
+        "echo-web3": "^0.1.5",
         "react-tooltip": "^3.10.0",
         "recharts": "^1.6.2",
         "redux": "^4.0.1",
@@ -49,12 +50,6 @@
     },
     "eslintConfig": {
         "extends": "react-app"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "npm run prettier-check",
-            "pre-push": "npm run lint && npm run test-once"
-        }
     },
     "jest": {
         "collectCoverageFrom": [

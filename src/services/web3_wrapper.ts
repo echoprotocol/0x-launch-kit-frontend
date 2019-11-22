@@ -1,4 +1,6 @@
 import { Web3Wrapper } from '@0x/web3-wrapper';
+//@ts-ignore
+import { EchoPolyfill } from 'echo-web3';
 
 import { sleep } from '../util/sleep';
 
@@ -10,6 +12,7 @@ export const isMetamaskInstalled = (): boolean => {
 };
 
 export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
+    await EchoPolyfill();
     const { ethereum, web3, location } = window;
 
     if (web3Wrapper) {
