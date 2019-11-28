@@ -43,8 +43,8 @@
     ],
     "pairs": [
         {
-            "base": "zrx",
-            "quote": "wecho"
+            "base": "wecho",
+            "quote": "zrx"
         },
         {
             "base": "wecho",
