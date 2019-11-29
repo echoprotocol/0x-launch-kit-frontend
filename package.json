@@ -8,7 +8,7 @@
         "async-retry": "^1.2.3",
         "async-sema": "^3.0.0",
         "connected-react-router": "^6.2.2",
-        "echo-web3": "^0.1.5",
+        "echo-web3": "^0.1.6",
         "history": "^4.7.2",
         "http-proxy-middleware": "^0.19.1",
         "jsonschema": "^1.2.4",

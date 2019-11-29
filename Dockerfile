@@ -14,7 +14,7 @@ RUN cd ./0x-monorepo && yarn install && yarn build && yarn workspaces run link
 RUN yarn link 0x.js @0x/web3-wrapper @0x/connect @0x/order-utils @0x/typescript-typings
 RUN yarn cache clean
 
-RUN yarn --no-cache
+RUN yarn --no-cache --frozen-lockfile
 RUN yarn remove babel-jest
 RUN yarn add babel-jest@24.7.1
 RUN yarn build
