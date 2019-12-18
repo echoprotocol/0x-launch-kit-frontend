@@ -56,7 +56,11 @@ export interface BlockchainState {
     readonly web3State: Web3State;
     readonly tokenBalances: TokenBalance[];
     readonly ethBalance: BigNumber;
+    readonly eethBalance: BigNumber;
+    readonly ebtcBalance: BigNumber;
     readonly wethTokenBalance: TokenBalance | null;
+    readonly weethTokenBalance: TokenBalance | null;
+    readonly webtcTokenBalance: TokenBalance | null;
     readonly gasInfo: GasInfo;
     readonly convertBalanceState: ConvertBalanceState;
 }
@@ -98,6 +102,7 @@ export enum StepKind {
     UnlockCollectibles = 'UnlockCollectibles',
     SellCollectible = 'SellCollectible',
     BuyCollectible = 'BuyCollectible',
+    WrapEeth = 'WrapEeth',
 }
 
 export interface StepWrapEth {
@@ -106,6 +111,14 @@ export interface StepWrapEth {
     newWethBalance: BigNumber;
     context: 'order' | 'standalone';
 }
+
+export interface StepWrapEeth {
+    kind: StepKind.WrapEeth;
+    currentWeethBalance: BigNumber;
+    newWeethBalance: BigNumber;
+    context: 'order' | 'standalone';
+}
+
 
 export interface StepToggleTokenLock {
     kind: StepKind.ToggleTokenLock;
@@ -152,6 +165,7 @@ export interface StepBuyCollectible {
 
 export type Step =
     | StepWrapEth
+    | StepWrapEeth
     | StepToggleTokenLock
     | StepBuySellLimitOrder
     | StepBuySellMarket

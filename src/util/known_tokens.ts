@@ -3,7 +3,7 @@ import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
 import { getLogger } from '../util/logger';
 
-import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
+import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId, getWeethTokenFromTokensMetaDataByNetworkId } from './token_meta_data';
 import { Token } from './types';
 
 const logger = getLogger('Tokens::known_tokens .ts');
@@ -11,10 +11,13 @@ const logger = getLogger('Tokens::known_tokens .ts');
 export class KnownTokens {
     private readonly _tokens: Token[] = [];
     private readonly _wethToken: Token;
+    private readonly _weethToken: Token;
+    
 
     constructor(knownTokensMetadata: TokenMetaData[]) {
         this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensMetadata).filter(token => !isWeth(token.symbol));
         this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata);
+        this._weethToken = getWeethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata);
     }
 
     public getTokenBySymbol = (symbol: string): Token => {
@@ -82,6 +85,11 @@ export class KnownTokens {
         return true;
     };
 
+    
+    public getWeethToken = (): Token => {
+        return this._weethToken as Token;
+    };
+
     public getWethToken = (): Token => {
         return this._wethToken as Token;
     };
@@ -114,6 +122,14 @@ export const isZrx = (token: string): boolean => {
 
 export const isWeth = (token: string): boolean => {
     return token === 'wecho';
+};
+
+export const isWeeth = (token: string): boolean => {
+    return token === 'weeth';
+};
+
+export const isWebtc = (token: string): boolean => {
+    return token === 'webtc';
 };
 
 export const isERC20AssetData = (assetData: string): boolean => {

@@ -2,7 +2,7 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
-import { COLLECTIBLE_ADDRESS, NETWORK_ID, START_BLOCK_LIMIT } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS, NETWORK_ID, START_BLOCK_LIMIT, EETH_ASSET_ID, EBTC_ASSET_ID, ECHO_ASSET_ID } from '../../common/constants';
 import { ConvertBalanceMustNotBeEqualException } from '../../exceptions/convert_balance_must_not_be_equal_exception';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { subscribeToFillEvents } from '../../services/exchange';
@@ -37,7 +37,9 @@ import {
     getMarkets,
     getTokenBalances,
     getWethBalance,
+    getWeethBalance,
     getWethTokenBalance,
+    getWeethTokenBalance
 } from '../selectors';
 import { addNotifications, setHasUnreadNotifications, setNotifications } from '../ui/actions';
 
@@ -66,6 +68,14 @@ export const setTokenBalances = createAction('blockchain/TOKEN_BALANCES_set', re
 });
 
 export const setEthBalance = createAction('blockchain/ETH_BALANCE_set', resolve => {
+    return (ethBalance: BigNumber) => resolve(ethBalance);
+});
+
+export const setEethBalance = createAction('blockchain/EETH_BALANCE_set', resolve => {
+    return (ethBalance: BigNumber) => resolve(ethBalance);
+});
+
+export const setEbtcBalance = createAction('blockchain/EBTC_BALANCE_set', resolve => {
     return (ethBalance: BigNumber) => resolve(ethBalance);
 });
 
@@ -177,6 +187,39 @@ export const updateWethBalance: ThunkCreator<Promise<any>> = (newWethBalance: Bi
     };
 };
 
+export const updateWeethBalance: ThunkCreator<Promise<any>> = (newWeethBalance: BigNumber) => {
+    return async (dispatch, getState, { getContractWrappers }) => {
+        const contractWrappers = await getContractWrappers();
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const gasPrice = getGasPriceInWei(state);
+        const weethBalance = getWeethBalance(state);
+        const weethAddress = getKnownTokens().getWeethToken().address;
+
+        let txHash: string;
+        if (weethBalance.isLessThan(newWeethBalance)) {
+            txHash = await contractWrappers.weethToken.depositAsync(
+                weethAddress,
+                newWeethBalance.minus(weethBalance),
+                ethAccount,
+                getTransactionOptions(gasPrice),
+            );
+        } else if (weethBalance.isGreaterThan(newWeethBalance)) {
+            txHash = await contractWrappers.weethToken.withdrawAsync(
+                weethAddress,
+                weethBalance.minus(newWeethBalance),
+                ethAccount,
+                getTransactionOptions(gasPrice),
+            );
+        } else {
+            throw new ConvertBalanceMustNotBeEqualException(weethBalance, newWeethBalance);
+        }
+
+        return txHash;
+    };
+};
+
+
 export const updateTokenBalances: ThunkCreator<Promise<any>> = (txHash?: string) => {
     return async (dispatch, getState, { getWeb3Wrapper }) => {
         const state = getState();
@@ -190,7 +233,7 @@ export const updateTokenBalances: ThunkCreator<Promise<any>> = (txHash?: string)
         dispatch(setTokenBalances(tokenBalances));
 
         const web3Wrapper = await getWeb3Wrapper();
-        const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+        const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount, ECHO_ASSET_ID);
         if (wethBalance) {
             dispatch(setWethBalance(wethBalance.balance));
         }
@@ -226,12 +269,12 @@ export const setConnectedUserNotifications: ThunkCreator<Promise<any>> = (ethAcc
         const lastBlockChecked = localStorage.getLastBlockChecked(ethAccount);
 
         const fromBlock =
-            lastBlockChecked !== null ? 
-                lastBlockChecked === blockNumber?
-                    lastBlockChecked 
+            lastBlockChecked !== null ?
+                lastBlockChecked === blockNumber ?
+                    lastBlockChecked
                     :
-                    lastBlockChecked + 1 
-                : 
+                    lastBlockChecked + 1
+                :
                 Math.max(blockNumber - START_BLOCK_LIMIT, 1);
 
         const toBlock = blockNumber;
@@ -291,7 +334,7 @@ export const setConnectedUserNotifications: ThunkCreator<Promise<any>> = (ethAcc
 
 export const initWallet: ThunkCreator<Promise<any>> = () => {
     return async (dispatch, getState) => {
-       
+
         dispatch(setWeb3State(Web3State.Loading));
         const state = getState();
         const currentMarketPlace = getCurrentMarketPlace(state);
@@ -327,11 +370,13 @@ const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
 
             const [ethAccount] = await web3Wrapper.getAvailableAddressesAsync();
             const [echoAccount] = await (window as any).echojslib.extension.getAccounts();
-            const { name: echoAccountName = ''} = echoAccount || {};
+            const { name: echoAccountName = '' } = echoAccount || {};
             const knownTokens = getKnownTokens();
             const wethToken = knownTokens.getWethToken();
             const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
-            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount);
+            const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount, ECHO_ASSET_ID);
+            const eethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount, EETH_ASSET_ID);
+            const ebtcBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount, EBTC_ASSET_ID);
 
             await dispatch(
                 initializeBlockchainData({
@@ -339,6 +384,8 @@ const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
                     ethAccount,
                     web3State: Web3State.Done,
                     ethBalance,
+                    eethBalance,
+                    ebtcBalance,
                     wethTokenBalance,
                     tokenBalances: [],
                 }),
@@ -357,6 +404,7 @@ const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
             dispatch(updateMarketPriceEther());
 
         }
+
     };
 };
 

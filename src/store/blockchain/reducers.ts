@@ -12,7 +12,11 @@ const initialBlockchainState: BlockchainState = {
     web3State: Web3State.Loading,
     tokenBalances: [],
     ethBalance: new BigNumber(0),
+    eethBalance: new BigNumber(0),
+    ebtcBalance: new BigNumber(0),
     wethTokenBalance: null,
+    weethTokenBalance: null,
+    webtcTokenBalance: null,
     gasInfo: {
         gasPriceInWei: DEFAULT_GAS_PRICE,
         estimatedTimeMs: DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,
@@ -44,6 +48,10 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             };
         case getType(actions.setEthBalance):
             return { ...state, ethBalance: action.payload };
+        case getType(actions.setEethBalance):
+            return { ...state, eethBalance: action.payload };
+        case getType(actions.setEbtcBalance):
+            return { ...state, ebtcBalance: action.payload };
         case getType(actions.convertBalanceStateAsync.request):
             return { ...state, convertBalanceState: ConvertBalanceState.Request };
         case getType(actions.convertBalanceStateAsync.failure):

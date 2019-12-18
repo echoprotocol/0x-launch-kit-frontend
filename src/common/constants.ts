@@ -13,6 +13,10 @@ export const TX_DEFAULTS = {
     shouldValidate: true,
 };
 
+export const ECHO_ASSET_ID = '1.3.0';
+export const EETH_ASSET_ID = '1.3.1';
+export const EBTC_ASSET_ID = '1.3.2';
+
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS;

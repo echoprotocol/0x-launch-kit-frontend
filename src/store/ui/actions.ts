@@ -23,6 +23,7 @@ import {
     StepKind,
     StepToggleTokenLock,
     StepWrapEth,
+    StepWrapEeth,
     ThunkCreator,
     Token,
     TokenBalance,
@@ -84,6 +85,24 @@ export const startWrapEtherSteps: ThunkCreator = (newWethBalance: BigNumber) => 
         };
 
         dispatch(setStepsModalCurrentStep(wrapEthStep));
+        dispatch(setStepsModalPendingSteps([]));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+export const startWrapEETHSteps: ThunkCreator = (newWeethBalance: BigNumber) => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const currentWeethBalance = selectors.getWeethBalance(state);
+
+        const wrapEethStep: StepWrapEeth = {
+            kind: StepKind.WrapEeth,
+            currentWeethBalance,
+            newWeethBalance,
+            context: 'standalone',
+        };
+
+        dispatch(setStepsModalCurrentStep(wrapEethStep));
         dispatch(setStepsModalPendingSteps([]));
         dispatch(setStepsModalDoneSteps([]));
     };
