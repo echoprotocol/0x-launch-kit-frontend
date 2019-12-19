@@ -125,7 +125,6 @@ class WrapEethStep extends React.Component<Props, State> {
             await sleep(STEP_MODAL_DONE_STATUS_VISIBILITY_TIME);
             advanceStep();
         } catch (err) {
-            console.log('TCL: WrapEethStep -> privatereadonly_convertWeth -> err', err);
             let exception = err;
             let errorCaption = UNEXPECTED_ERROR;
             if (err.toString().includes(USER_DENIED_TRANSACTION_SIGNATURE_ERR)) {

@@ -1,5 +1,5 @@
 import { assetDataUtils, BigNumber } from '0x.js';
-import { isWeeth, isWebtc} from '../util/known_tokens';
+import { isWeeth, isWeth} from '../util/known_tokens';
 import { Token, TokenBalance } from '../util/types';
 
 import { getContractWrappers } from './contract_wrappers';
@@ -7,6 +7,7 @@ import { getContractWrappers } from './contract_wrappers';
 export const tokensToTokenBalances = async (tokens: Token[], address: string): Promise<TokenBalance[]> => {
     let weethToken = null;
     let webtcToken = null;
+    let wethToken = null;
 
     tokens = tokens.filter((token) =>{
         if (isWeeth(token.symbol)){
@@ -19,16 +20,15 @@ export const tokensToTokenBalances = async (tokens: Token[], address: string): P
         // }
         return true;
     })
+    console.log('TCL: tokens', tokens);
 
     const contractWrappers = await getContractWrappers();
     
     const assetDatas = tokens.map(t => assetDataUtils.encodeERC20AssetData(t.address));
-    console.log('TCL: assetDatas', assetDatas);
     const balancesAndAllowances = await contractWrappers.orderValidator.getBalancesAndAllowancesAsync(
         address,
         assetDatas,
     );
-    console.log('TCL: balancesAndAllowances', balancesAndAllowances);
 
     const tokenBalances = balancesAndAllowances.map((b, i) => ({
         token: tokens[i],
@@ -36,13 +36,13 @@ export const tokensToTokenBalances = async (tokens: Token[], address: string): P
         isUnlocked: b.allowance.isGreaterThan(0),
     }));
 
-    // if (weethToken){
-    //     tokenBalances.push(await tokenToTokenBalance(weethToken, address))
-    // }
-
-    if (webtcToken) {
-        tokenBalances.push(await tokenToTokenBalance(webtcToken, address))
+    if (weethToken){
+        tokenBalances.push(await tokenToTokenBalance(weethToken, address))
     }
+
+    // if (wethToken) {
+    //     tokenBalances.push(await tokenToTokenBalance(wethToken, address))
+    // }
 
     return tokenBalances;
 };
@@ -51,6 +51,7 @@ export const tokenToTokenBalance = async (token: Token, address: string): Promis
 
     const assetData = assetDataUtils.encodeERC20AssetData(token.address);
     const balanceAndAllowance = await contractWrappers.orderValidator.getBalanceAndAllowanceAsync(address, assetData);
+    console.log('TCL: balanceAndAllowance', balanceAndAllowance);
     const { balance, allowance } = balanceAndAllowance;
 
     const isUnlocked = allowance.isGreaterThan(0);
@@ -61,8 +62,7 @@ export const tokenToTokenBalance = async (token: Token, address: string): Promis
         isUnlocked,
     };
 };
-// 0xf47261b0000000000000000000000000010000000000000000000000000000000000012d
-// 0xf47261b00000000000000000000000000100000000000000000000000000000000000131
+
 export const getTokenBalance = async (token: Token, address: string): Promise<BigNumber> => {
     const contractWrappers = await getContractWrappers();
     return contractWrappers.erc20Token.getBalanceAsync(token.address, address);

@@ -27,6 +27,9 @@ export class KnownTokens {
             if (symbolInLowerCaseScore === 'wecho') {
                 return this.getWethToken();
             }
+            if (symbolInLowerCaseScore === 'weeth') {
+                return this.getWeethToken();
+            }
             const errorMessage = `Token with symbol ${symbol} not found in known tokens`;
             logger.log(errorMessage);
             throw new Error(errorMessage);
@@ -41,6 +44,11 @@ export class KnownTokens {
             // If it's not on the tokens list, we check if it's an wETH token
             // TODO - Maybe the this._tokens could be refactored to also have wETH inside
             token = this._wethToken.address === address ? this._wethToken : undefined;
+        }
+        if (!token) {
+            // If it's not on the tokens list, we check if it's an wETH token
+            // TODO - Maybe the this._tokens could be refactored to also have wETH inside
+            token = this._weethToken.address === address ? this._weethToken : undefined;
         }
         if (!token) {
             throw new Error(`Token with address ${address} not found in known tokens`);

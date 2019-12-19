@@ -48,8 +48,8 @@
             "addresses": {
                 "3": "0x010000000000000000000000000000000000012d"
             },
-            "decimals": 8,
-            "displayDecimals": 4
+            "decimals": 6,
+            "displayDecimals": 2
         }
     ],
     "pairs": [
@@ -64,6 +64,10 @@
         {
             "base": "rep",
             "quote": "zrx"
+        },
+        {
+            "base": "wecho",
+            "quote": "weeth"
         }
     ],
     "marketFilters": [

@@ -226,6 +226,7 @@ export const updateTokenBalances: ThunkCreator<Promise<any>> = (txHash?: string)
         const ethAccount = getEthAccount(state);
         const knownTokens = getKnownTokens();
         const wethToken = knownTokens.getWethToken();
+        const weethToken = knownTokens.getWeethToken();
 
         const allTokenBalances = await tokensToTokenBalances([...knownTokens.getTokens(), wethToken], ethAccount);
         const wethBalance = allTokenBalances.find(b => b.token.symbol === wethToken.symbol);
