@@ -27,6 +27,7 @@ import {
     ThunkCreator,
     Token,
     TokenBalance,
+    StepWrapEbtc
 } from '../../util/types';
 import * as selectors from '../selectors';
 
@@ -108,6 +109,25 @@ export const startWrapEETHSteps: ThunkCreator = (newWeethBalance: BigNumber) => 
     };
 };
 
+export const startWrapEBTCSteps: ThunkCreator = (newWebtcBalance: BigNumber) => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const currentWebtcBalance = selectors.getWebtcBalance(state);
+
+        const wrapEethStep: StepWrapEbtc = {
+            kind: StepKind.WrapEbtc,
+            currentWebtcBalance,
+            newWebtcBalance,
+            context: 'standalone',
+        };
+
+        dispatch(setStepsModalCurrentStep(wrapEethStep));
+        dispatch(setStepsModalPendingSteps([]));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+
 export const startSellCollectibleSteps: ThunkCreator = (
     collectible: Collectible,
     startingPrice: BigNumber,
@@ -182,12 +202,16 @@ export const startBuySellLimitSteps: ThunkCreator = (
         const quoteToken = selectors.getQuoteToken(state) as Token;
         const tokenBalances = selectors.getTokenBalances(state) as TokenBalance[];
         const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+        const weethTokenBalance = selectors.getWeethTokenBalance(state) as TokenBalance;
+        const webtcTokenBalance = selectors.getWebtcTokenBalance(state) as TokenBalance;
 
         const buySellLimitFlow: Step[] = createBuySellLimitSteps(
             baseToken,
             quoteToken,
             tokenBalances,
             wethTokenBalance,
+            weethTokenBalance,
+            webtcTokenBalance,
             amount,
             price,
             side,
@@ -207,7 +231,11 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         const quoteToken = selectors.getQuoteToken(state) as Token;
         const tokenBalances = selectors.getTokenBalances(state) as TokenBalance[];
         const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+        const weethTokenBalance = selectors.getWeethTokenBalance(state) as TokenBalance;
+        const webtcTokenBalance = selectors.getWebtcTokenBalance(state) as TokenBalance;
         const ethBalance = selectors.getEthBalance(state);
+        const eethBalance = selectors.getEETHBalance(state);
+        const ebtcBalance = selectors.getEBTCBalance(state);
         const totalEthBalance = selectors.getTotalEthBalance(state);
         const quoteTokenBalance = selectors.getQuoteTokenBalance(state);
         const baseTokenBalance = selectors.getBaseTokenBalance(state);
@@ -255,7 +283,11 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             quoteToken,
             tokenBalances,
             wethTokenBalance,
+            weethTokenBalance,
+            webtcTokenBalance,
             ethBalance,
+            eethBalance,
+            ebtcBalance,
             amount,
             side,
             price,

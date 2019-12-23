@@ -10,7 +10,7 @@ import { getGasEstimationInfoAsync } from '../../services/gas_price_estimation';
 import { LocalStorage } from '../../services/local_storage';
 import { tokensToTokenBalances, tokenToTokenBalance } from '../../services/tokens';
 import { isMetamaskInstalled } from '../../services/web3_wrapper';
-import { getKnownTokens, isWeth } from '../../util/known_tokens';
+import { getKnownTokens, isWeth, isWeeth, isWebtc } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { buildOrderFilledNotification } from '../../util/notifications';
 import { buildDutchAuctionCollectibleOrder, buildSellCollectibleOrder } from '../../util/orders';
@@ -38,8 +38,10 @@ import {
     getTokenBalances,
     getWethBalance,
     getWeethBalance,
+    getWebtcBalance,
     getWethTokenBalance,
-    getWeethTokenBalance
+    getWeethTokenBalance,
+    getWebtcTokenBalance
 } from '../selectors';
 import { addNotifications, setHasUnreadNotifications, setNotifications } from '../ui/actions';
 
@@ -83,8 +85,24 @@ export const setWethBalance = createAction('blockchain/WETH_BALANCE_set', resolv
     return (wethBalance: BigNumber) => resolve(wethBalance);
 });
 
+export const setWeethBalance = createAction('blockchain/WEETH_BALANCE_set', resolve => {
+    return (weethBalance: BigNumber) => resolve(weethBalance);
+});
+
+export const setWebtcBalance = createAction('blockchain/WEBTC_BALANCE_set', resolve => {
+    return (webtcBalance: BigNumber) => resolve(webtcBalance);
+});
+
 export const setWethTokenBalance = createAction('blockchain/WETH_TOKEN_BALANCE_set', resolve => {
     return (wethTokenBalance: TokenBalance | null) => resolve(wethTokenBalance);
+});
+
+export const setWeethTokenBalance = createAction('blockchain/WEETH_TOKEN_BALANCE_set', resolve => {
+    return (weethTokenBalance: TokenBalance | null) => resolve(weethTokenBalance);
+});
+
+export const setWebtcTokenBalance = createAction('blockchain/WEBTC_TOKEN_BALANCE_set', resolve => {
+    return (webtcTokenBalance: TokenBalance | null) => resolve(webtcTokenBalance);
 });
 
 export const setGasInfo = createAction('blockchain/GAS_INFO_set', resolve => {
@@ -137,7 +155,24 @@ export const updateTokenBalancesOnToggleTokenLock: ThunkCreator = (token: Token,
                     isUnlocked: !isUnlocked,
                 }),
             );
-        } else {
+        } else if (isWeeth(token.symbol)) {
+            const weethTokenBalance = getWeethTokenBalance(state) as TokenBalance;
+            dispatch(
+                setWeethTokenBalance({
+                    ...weethTokenBalance,
+                    isUnlocked: !isUnlocked,
+                }),
+            );
+        } else if (isWebtc(token.symbol)) {
+            const webtcTokenBalance = getWebtcTokenBalance(state) as TokenBalance;
+            dispatch(
+                setWebtcTokenBalance({
+                    ...webtcTokenBalance,
+                    isUnlocked: !isUnlocked,
+                }),
+            );
+        }
+         else {
             const tokenBalances = getTokenBalances(state);
             const updatedTokenBalances = tokenBalances.map(tokenBalance => {
                 if (tokenBalance.token.address !== token.address) {
@@ -220,6 +255,39 @@ export const updateWeethBalance: ThunkCreator<Promise<any>> = (newWeethBalance: 
 };
 
 
+export const updateWebtcBalance: ThunkCreator<Promise<any>> = (newWebtcBalance: BigNumber) => {
+    return async (dispatch, getState, { getContractWrappers }) => {
+        const contractWrappers = await getContractWrappers();
+        const state = getState();
+        const ethAccount = getEthAccount(state);
+        const gasPrice = getGasPriceInWei(state);
+        const webtcBalance = getWebtcBalance(state);
+        const webtcAddress = getKnownTokens().getWebtcToken().address;
+
+        let txHash: string;
+        if (webtcBalance.isLessThan(newWebtcBalance)) {
+            txHash = await contractWrappers.webtcToken.depositAsync(
+                webtcAddress,
+                newWebtcBalance.minus(webtcBalance),
+                ethAccount,
+                getTransactionOptions(gasPrice),
+            );
+        } else if (webtcBalance.isGreaterThan(newWebtcBalance)) {
+            txHash = await contractWrappers.webtcToken.withdrawAsync(
+                webtcAddress,
+                webtcBalance.minus(newWebtcBalance),
+                ethAccount,
+                getTransactionOptions(gasPrice),
+            );
+        } else {
+            throw new ConvertBalanceMustNotBeEqualException(webtcBalance, newWebtcBalance);
+        }
+
+        return txHash;
+    };
+};
+
+
 export const updateTokenBalances: ThunkCreator<Promise<any>> = (txHash?: string) => {
     return async (dispatch, getState, { getWeb3Wrapper }) => {
         const state = getState();
@@ -227,16 +295,25 @@ export const updateTokenBalances: ThunkCreator<Promise<any>> = (txHash?: string)
         const knownTokens = getKnownTokens();
         const wethToken = knownTokens.getWethToken();
         const weethToken = knownTokens.getWeethToken();
+        const webtcToken = knownTokens.getWebtcToken();
 
-        const allTokenBalances = await tokensToTokenBalances([...knownTokens.getTokens(), wethToken], ethAccount);
+        const allTokenBalances = await tokensToTokenBalances([...knownTokens.getTokens(), wethToken, weethToken, webtcToken], ethAccount);
         const wethBalance = allTokenBalances.find(b => b.token.symbol === wethToken.symbol);
-        const tokenBalances = allTokenBalances.filter(b => b.token.symbol !== wethToken.symbol);
+        const weethBalance = allTokenBalances.find(b => b.token.symbol === weethToken.symbol);
+        const webtcBalance = allTokenBalances.find(b => b.token.symbol === webtcToken.symbol);
+        const tokenBalances = allTokenBalances.filter(b => b.token.symbol !== wethToken.symbol && b.token.symbol !== weethToken.symbol && b.token.symbol !== webtcToken.symbol);
         dispatch(setTokenBalances(tokenBalances));
 
         const web3Wrapper = await getWeb3Wrapper();
         const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount, ECHO_ASSET_ID);
         if (wethBalance) {
             dispatch(setWethBalance(wethBalance.balance));
+        }
+        if (weethBalance) {
+            dispatch(setWeethBalance(weethBalance.balance));
+        }
+        if (webtcBalance) {
+            dispatch(setWebtcBalance(webtcBalance.balance));
         }
         dispatch(setEthBalance(ethBalance));
         return ethBalance;
@@ -374,7 +451,11 @@ const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
             const { name: echoAccountName = '' } = echoAccount || {};
             const knownTokens = getKnownTokens();
             const wethToken = knownTokens.getWethToken();
+            const weethToken = knownTokens.getWeethToken();
+            const webtcToken = knownTokens.getWebtcToken();
             const wethTokenBalance = await tokenToTokenBalance(wethToken, ethAccount);
+            const weethTokenBalance = await tokenToTokenBalance(weethToken, ethAccount);
+            const webtcTokenBalance = await tokenToTokenBalance(webtcToken, ethAccount);
             const ethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount, ECHO_ASSET_ID);
             const eethBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount, EETH_ASSET_ID);
             const ebtcBalance = await web3Wrapper.getBalanceInWeiAsync(ethAccount, EBTC_ASSET_ID);
@@ -388,6 +469,8 @@ const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
                     eethBalance,
                     ebtcBalance,
                     wethTokenBalance,
+                    weethTokenBalance,
+                    webtcTokenBalance,
                     tokenBalances: [],
                 }),
             );

@@ -28,6 +28,7 @@ interface Props extends React.ComponentProps<typeof Modal> {
     totalEth: BigNumber;
     wethBalance: BigNumber;
     ethInUsd: BigNumber | null;
+    decimals: number;
 }
 
 interface State {
@@ -69,17 +70,17 @@ const Slider = styled.input`
     &::-webkit-slider-runnable-track {
         ${sliderTrackProps}
         background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props =>
-    props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
+        props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
     }
     &::-moz-range-track {
         ${sliderTrackProps}
         background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props =>
-    props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
+        props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
     }
     &::-ms-track {
         ${sliderTrackProps}
         background: linear-gradient(${props => props.theme.componentsTheme.ethBoxActiveColor}, ${props =>
-    props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
+        props.theme.componentsTheme.ethBoxActiveColor}) 0 / var(--sx) 100% no-repeat #999;
     }
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
@@ -158,15 +159,15 @@ const EthBox = styled.div<EthBoxProps>`
 
     &:focus-within {
         border-color: ${props =>
-            props.boxType === ETHBoxType.Weth
-                ? props.theme.componentsTheme.ethBoxActiveColor
-                : props.theme.componentsTheme.textDark};
+        props.boxType === ETHBoxType.Weth
+            ? props.theme.componentsTheme.ethBoxActiveColor
+            : props.theme.componentsTheme.textDark};
 
         h4 {
             color: ${props =>
-                props.boxType === ETHBoxType.Weth
-                    ? props.theme.componentsTheme.ethBoxActiveColor
-                    : props.theme.componentsTheme.textLight};
+        props.boxType === ETHBoxType.Weth
+            ? props.theme.componentsTheme.ethBoxActiveColor
+            : props.theme.componentsTheme.textLight};
         }
     }
 `;
@@ -257,13 +258,13 @@ class WethModal extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { isSubmitting, totalEth, wethBalance, ethInUsd, ...restProps } = this.props;
+        const { isSubmitting, totalEth, wethBalance, ethInUsd, decimals, ...restProps } = this.props;
         const { editing, selectedWeth } = this.state;
 
         const selectedEth = totalEth.minus(selectedWeth);
-        const selectedWethStr = tokenAmountInUnits(selectedWeth, ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS);
-        const selectedEthStr = tokenAmountInUnits(selectedEth, ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS);
-        const totalEthStr = tokenAmountInUnits(totalEth, ETH_DECIMALS);
+        const selectedWethStr = tokenAmountInUnits(selectedWeth, decimals, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS);
+        const selectedEthStr = tokenAmountInUnits(selectedEth, decimals, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS);
+        const totalEthStr = tokenAmountInUnits(totalEth, decimals);
         const isInsufficientEth = selectedEth.isLessThan(minEth);
         const isDisabled = wethBalance.isEqualTo(selectedWeth) || isSubmitting || isInsufficientEth;
 
@@ -289,14 +290,14 @@ class WethModal extends React.Component<Props, State> {
                                 />
                             </FormBox>
                         ) : (
-                            <EthBoxValue
-                                boxType={ETHBoxType.Eth}
-                                isZero={selectedEthStr === minSlidervalue}
-                                onClick={this._enableEditEth}
-                            >
-                                {selectedEthStr}
-                            </EthBoxValue>
-                        )}
+                                <EthBoxValue
+                                    boxType={ETHBoxType.Eth}
+                                    isZero={selectedEthStr === minSlidervalue}
+                                    onClick={this._enableEditEth}
+                                >
+                                    {selectedEthStr}
+                                </EthBoxValue>
+                            )}
                         <EthBoxUnit>ETH</EthBoxUnit>
                     </EthBox>
                     <EthBox boxType={ETHBoxType.Weth}>
@@ -304,7 +305,7 @@ class WethModal extends React.Component<Props, State> {
                             <FormBox noValidate={true} onSubmit={this._disableEdit}>
                                 <InputEth
                                     autofocus={true}
-                                    decimals={ETH_DECIMALS}
+                                    decimals={decimals}
                                     max={totalEth}
                                     min={new BigNumber(0)}
                                     onChange={this._updateWeth}
@@ -315,14 +316,14 @@ class WethModal extends React.Component<Props, State> {
                                 />
                             </FormBox>
                         ) : (
-                            <EthBoxValue
-                                boxType={ETHBoxType.Weth}
-                                isZero={selectedWethStr === minSlidervalue}
-                                onClick={this._enableEditWeth}
-                            >
-                                {selectedWethStr}
-                            </EthBoxValue>
-                        )}
+                                <EthBoxValue
+                                    boxType={ETHBoxType.Weth}
+                                    isZero={selectedWethStr === minSlidervalue}
+                                    onClick={this._enableEditWeth}
+                                >
+                                    {selectedWethStr}
+                                </EthBoxValue>
+                            )}
                         <EthBoxUnit>wETH</EthBoxUnit>
                         <TooltipStyled>
                             <Tooltip description="ECHO cannot be traded with other tokens directly.<br />You need to convert it to WECHO first.<br />WECHO can be converted back to ECHO at any time." />
@@ -376,7 +377,8 @@ class WethModal extends React.Component<Props, State> {
     };
 
     private readonly _updateSelectedWeth: React.ReactEventHandler<HTMLInputElement> = e => {
-        const newSelectedWeth = unitsInTokenAmount(e.currentTarget.value, ETH_DECIMALS);
+        const { decimals } = this.props;
+        const newSelectedWeth = unitsInTokenAmount(e.currentTarget.value, decimals);
 
         this.setState({
             selectedWeth: newSelectedWeth,

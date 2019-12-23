@@ -8,5 +8,6 @@ export interface TokenMetaData {
     primaryColor: string;
     icon?: string;
     displayDecimals?: number;
+    assetId?: string;
 }
 export const KNOWN_TOKENS_META_DATA: TokenMetaData[] = Config.getConfig().tokens;

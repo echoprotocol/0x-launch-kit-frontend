@@ -9,7 +9,7 @@
             "primaryColor": "#333333",
             "icon": "assets/icons/zrx.svg",
             "addresses": {
-                "3": "0x0100000000000000000000000000000000000130",
+                "3": "0x01000000000000000000000000000000000001bd",
                 "4": "0x0100000000000000000000000000000000000003",
                 "228": "0x010000000000000000000000000000000000005d"
             },
@@ -22,20 +22,9 @@
             "primaryColor": "#333333",
             "icon": "assets/icons/wecho.svg",
             "addresses": {
-                "3": "0x0100000000000000000000000000000000000131",
+                "3": "0x01000000000000000000000000000000000001be",
                 "4": "0x0100000000000000000000000000000000000004",
                 "228": "0x010000000000000000000000000000000000005e"
-            },
-            "decimals": 18,
-            "displayDecimals": 2
-        },
-        {
-            "symbol": "rep",
-            "name": "Augur token",
-            "primaryColor": "#333333",
-            "icon": "assets/icons/rep.svg",
-            "addresses": {
-                "3": "0x0100000000000000000000000000000000000133"
             },
             "decimals": 18,
             "displayDecimals": 2
@@ -46,29 +35,35 @@
             "primaryColor": "#333333",
             "icon": "assets/icons/rep.svg",
             "addresses": {
-                "3": "0x010000000000000000000000000000000000012d"
+                "3": "0x01000000000000000000000000000000000001ba"
             },
-            "decimals": 6,
-            "displayDecimals": 2
+            "decimals": 18,
+            "displayDecimals": 2,
+            "assetId": "1.3.1"
+        },
+        {
+            "symbol": "webtc",
+            "name": "Wrapped EBTC",
+            "primaryColor": "#333333",
+            "icon": "assets/icons/rep.svg",
+            "addresses": {
+                "3": "0x01000000000000000000000000000000000001b9"
+            },
+            "decimals": 8,
+            "displayDecimals": 2,
+            "assetId": "1.3.2"
         }
     ],
     "pairs": [
         {
-            "base": "zrx",
-            "quote": "wecho"
-        },
-        {
-            "base": "wecho",
-            "quote": "rep"
-        },
-        {
-            "base": "rep",
-            "quote": "zrx"
+            "base": "weeth",
+            "quote": "webtc"
         },
         {
             "base": "wecho",
             "quote": "weeth"
         }
+        
     ],
     "marketFilters": [
         {

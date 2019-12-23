@@ -32,6 +32,24 @@ export const getWeethTokenFromTokensMetaDataByNetworkId = (tokensMetaData: Token
         primaryColor: tokenMetaData.primaryColor,
         icon: tokenMetaData.icon,
         displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
+        assetId: tokenMetaData.assetId,
+    };
+};
+
+export const getWebtcTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenMetaData[]): Token => {
+    const tokenMetaData = tokensMetaData.find(t => t.symbol === 'webtc');
+    if (!tokenMetaData) {
+        throw new Error('wecho Token MetaData not found');
+    }
+    return {
+        address: tokenMetaData.addresses[NETWORK_ID],
+        symbol: tokenMetaData.symbol,
+        decimals: tokenMetaData.decimals,
+        name: tokenMetaData.name,
+        primaryColor: tokenMetaData.primaryColor,
+        icon: tokenMetaData.icon,
+        displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
+        assetId: tokenMetaData.assetId,
     };
 };
 
@@ -48,6 +66,7 @@ export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaDat
                     primaryColor: tokenMetaData.primaryColor,
                     icon: tokenMetaData.icon,
                     displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
+                    assetId: tokenMetaData.assetId,
                 };
             },
         );

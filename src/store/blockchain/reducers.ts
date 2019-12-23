@@ -34,6 +34,10 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             return { ...state, tokenBalances: action.payload };
         case getType(actions.setWethTokenBalance):
             return { ...state, wethTokenBalance: action.payload };
+        case getType(actions.setWeethTokenBalance):
+            return { ...state, weethTokenBalance: action.payload }; 
+        case getType(actions.setWebtcTokenBalance):
+            return { ...state, webtcTokenBalance: action.payload };     
         case getType(actions.setGasInfo):
             return { ...state, gasInfo: action.payload };
         case getType(actions.setWethBalance):
@@ -41,9 +45,29 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
                 ...state,
                 wethTokenBalance: state.wethTokenBalance
                     ? {
-                          ...state.wethTokenBalance,
-                          balance: action.payload,
-                      }
+                        ...state.wethTokenBalance,
+                        balance: action.payload,
+                    }
+                    : null,
+            };
+        case getType(actions.setWeethBalance):
+            return {
+                ...state,
+                weethTokenBalance: state.weethTokenBalance
+                    ? {
+                        ...state.weethTokenBalance,
+                        balance: action.payload,
+                    }
+                    : null,
+            };
+        case getType(actions.setWebtcBalance):
+            return {
+                ...state,
+                webtcTokenBalance: state.webtcTokenBalance
+                    ? {
+                        ...state.webtcTokenBalance,
+                        balance: action.payload,
+                    }
                     : null,
             };
         case getType(actions.setEthBalance):

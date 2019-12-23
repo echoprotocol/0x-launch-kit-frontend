@@ -22,7 +22,7 @@ export const getTokenBalances = (state: StoreState) => state.blockchain.tokenBal
 export const getWeb3State = (state: StoreState) => state.blockchain.web3State;
 export const getEthBalance = (state: StoreState) => state.blockchain.ethBalance;
 export const getEETHBalance = (state: StoreState) => state.blockchain.eethBalance;
-export const getEBTCBalance = (state: StoreState) => state.blockchain.eethBalance;
+export const getEBTCBalance = (state: StoreState) => state.blockchain.ebtcBalance;
 export const getWethTokenBalance = (state: StoreState) => state.blockchain.wethTokenBalance;
 export const getWeethTokenBalance = (state: StoreState) => state.blockchain.weethTokenBalance;
 export const getWebtcTokenBalance = (state: StoreState) => state.blockchain.webtcTokenBalance;

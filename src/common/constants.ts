@@ -25,6 +25,7 @@ export const AFFILIATE_FEE_PERCENTAGE: number = process.env.REACT_APP_AFFILIATE_
     : 0;
 
 export const ETH_DECIMALS = 18;
+export const EBTC_DECIMALS = 8;
 
 export const UI_DECIMALS_DISPLAYED_ON_STEP_MODALS = 3;
 export const UI_DECIMALS_DISPLAYED_SPREAD_PERCENT = 2;

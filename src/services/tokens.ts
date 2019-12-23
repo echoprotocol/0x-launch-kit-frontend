@@ -1,5 +1,5 @@
 import { assetDataUtils, BigNumber } from '0x.js';
-import { isWeeth, isWeth} from '../util/known_tokens';
+import { isWeeth, isWebtc} from '../util/known_tokens';
 import { Token, TokenBalance } from '../util/types';
 
 import { getContractWrappers } from './contract_wrappers';
@@ -7,20 +7,18 @@ import { getContractWrappers } from './contract_wrappers';
 export const tokensToTokenBalances = async (tokens: Token[], address: string): Promise<TokenBalance[]> => {
     let weethToken = null;
     let webtcToken = null;
-    let wethToken = null;
 
     tokens = tokens.filter((token) =>{
         if (isWeeth(token.symbol)){
             weethToken = token;
             return false;
         } else 
-        // if (isWebtc(token.symbol)){
-        //     webtcToken = token;
-        //     return false;
-        // }
+        if (isWebtc(token.symbol)){
+            webtcToken = token;
+            return false;
+        }
         return true;
     })
-    console.log('TCL: tokens', tokens);
 
     const contractWrappers = await getContractWrappers();
     
@@ -40,17 +38,18 @@ export const tokensToTokenBalances = async (tokens: Token[], address: string): P
         tokenBalances.push(await tokenToTokenBalance(weethToken, address))
     }
 
-    // if (wethToken) {
-    //     tokenBalances.push(await tokenToTokenBalance(wethToken, address))
-    // }
+    if (webtcToken) {
+        tokenBalances.push(await tokenToTokenBalance(webtcToken, address))
+    }
 
     return tokenBalances;
 };
 export const tokenToTokenBalance = async (token: Token, address: string): Promise<TokenBalance> => {
+console.log('TCL: token', token);
     const contractWrappers = await getContractWrappers();
 
     const assetData = assetDataUtils.encodeERC20AssetData(token.address);
-    const balanceAndAllowance = await contractWrappers.orderValidator.getBalanceAndAllowanceAsync(address, assetData);
+    const balanceAndAllowance = await contractWrappers.orderValidator.getBalanceAndAllowanceAsync(address, assetData, token.assetId);
     console.log('TCL: balanceAndAllowance', balanceAndAllowance);
     const { balance, allowance } = balanceAndAllowance;
 
@@ -65,5 +64,5 @@ export const tokenToTokenBalance = async (token: Token, address: string): Promis
 
 export const getTokenBalance = async (token: Token, address: string): Promise<BigNumber> => {
     const contractWrappers = await getContractWrappers();
-    return contractWrappers.erc20Token.getBalanceAsync(token.address, address);
+    return contractWrappers.erc20Token.getBalanceAsync(token.address, address, {asset_id: token.assetId});
 };

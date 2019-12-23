@@ -28,6 +28,7 @@ export interface Token {
     primaryColor: string;
     icon?: string;
     displayDecimals: number;
+    assetId?: string;
 }
 
 export interface TokenBalance {
@@ -103,6 +104,7 @@ export enum StepKind {
     SellCollectible = 'SellCollectible',
     BuyCollectible = 'BuyCollectible',
     WrapEeth = 'WrapEeth',
+    WrapEbtc = 'WrapEbtc',
 }
 
 export interface StepWrapEth {
@@ -116,6 +118,13 @@ export interface StepWrapEeth {
     kind: StepKind.WrapEeth;
     currentWeethBalance: BigNumber;
     newWeethBalance: BigNumber;
+    context: 'order' | 'standalone';
+}
+
+export interface StepWrapEbtc {
+    kind: StepKind.WrapEbtc;
+    currentWebtcBalance: BigNumber;
+    newWebtcBalance: BigNumber;
     context: 'order' | 'standalone';
 }
 
@@ -164,6 +173,7 @@ export interface StepBuyCollectible {
 }
 
 export type Step =
+    | StepWrapEbtc
     | StepWrapEth
     | StepWrapEeth
     | StepToggleTokenLock

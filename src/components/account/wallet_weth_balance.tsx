@@ -19,6 +19,7 @@ import { Card } from '../common/card';
 import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
 import { LoadingWrapper } from '../common/loading';
 import { IconType, Tooltip } from '../common/tooltip';
+import { ETH_DECIMALS } from '../../common/constants';
 
 import { WethModal } from './wallet_weth_modal';
 
@@ -220,6 +221,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         style={theme.modalTheme}
                         totalEth={totalEth}
                         wethBalance={wethBalance}
+                        decimals={ETH_DECIMALS}
                     />
                 </>
             );
@@ -230,12 +232,6 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                 <Card title={inDropdown ? '' : 'ECHO / wECHO Balances'} className={className}>
                     <Content>{content}</Content>
                 </Card>
-                {inDropdown ? null : (
-                    <Note>
-                        wECHO is used for trades on 0x
-                        <br />1 wECHO = 1 ECHO
-                    </Note>
-                )}
             </>
         );
     };
