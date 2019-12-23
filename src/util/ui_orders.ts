@@ -58,6 +58,7 @@ const ordersToUIOrdersWithoutOrderInfo = (orders: SignedOrder[], baseToken: Toke
 
 // Filters the UI orders that are unfillable
 const filterUIOrders = (orders: UIOrder[]): UIOrder[] => {
+console.log('TCL: orders', orders);
     // For Market Fill we remove ANY orders which cannot be filled for their remaining amount.
     const marketFillFilter = (o: UIOrder) =>
         o.makerFillableAmountInTakerAsset.isGreaterThan(o.remainingTakerAssetFillAmount);

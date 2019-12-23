@@ -164,6 +164,7 @@ export class BaseStepModal extends React.Component<Props, State> {
             });
         };
         const onError = (err: Error | ComponentUnmountedException) => {
+            console.log('TCL: BaseStepModal -> onError -> err', err);
             if (err instanceof ComponentUnmountedException) {
                 return;
             }

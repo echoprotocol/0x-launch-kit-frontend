@@ -49,8 +49,8 @@
             "addresses": {
                 "3": "0x01000000000000000000000000000000000001b9"
             },
-            "decimals": 8,
-            "displayDecimals": 2,
+            "decimals": 18,
+            "displayDecimals": 12,
             "assetId": "1.3.2"
         }
     ],

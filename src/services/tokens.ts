@@ -45,12 +45,10 @@ export const tokensToTokenBalances = async (tokens: Token[], address: string): P
     return tokenBalances;
 };
 export const tokenToTokenBalance = async (token: Token, address: string): Promise<TokenBalance> => {
-console.log('TCL: token', token);
     const contractWrappers = await getContractWrappers();
 
     const assetData = assetDataUtils.encodeERC20AssetData(token.address);
     const balanceAndAllowance = await contractWrappers.orderValidator.getBalanceAndAllowanceAsync(address, assetData, token.assetId);
-    console.log('TCL: balanceAndAllowance', balanceAndAllowance);
     const { balance, allowance } = balanceAndAllowance;
 
     const isUnlocked = allowance.isGreaterThan(0);

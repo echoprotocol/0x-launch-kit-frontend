@@ -114,14 +114,14 @@ export const startWrapEBTCSteps: ThunkCreator = (newWebtcBalance: BigNumber) => 
         const state = getState();
         const currentWebtcBalance = selectors.getWebtcBalance(state);
 
-        const wrapEethStep: StepWrapEbtc = {
+        const wrapEbtcStep: StepWrapEbtc = {
             kind: StepKind.WrapEbtc,
             currentWebtcBalance,
             newWebtcBalance,
             context: 'standalone',
         };
 
-        dispatch(setStepsModalCurrentStep(wrapEethStep));
+        dispatch(setStepsModalCurrentStep(wrapEbtcStep));
         dispatch(setStepsModalPendingSteps([]));
         dispatch(setStepsModalDoneSteps([]));
     };
@@ -227,6 +227,7 @@ export const startBuySellLimitSteps: ThunkCreator = (
 export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: OrderSide, takerFee: BigNumber) => {
     return async (dispatch, getState) => {
         const state = getState();
+
         const baseToken = selectors.getBaseToken(state) as Token;
         const quoteToken = selectors.getQuoteToken(state) as Token;
         const tokenBalances = selectors.getTokenBalances(state) as TokenBalance[];
@@ -297,6 +298,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));
         dispatch(setStepsModalPendingSteps(buySellMarketFlow.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
+        
     };
 };
 

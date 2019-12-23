@@ -40,6 +40,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
 
     public render = () => {
         const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
+        console.log('TCL: publicrender -> step', step);
         const { token } = step;
         const tokenSymbol = tokenSymbolToDisplayString(token.symbol);
 

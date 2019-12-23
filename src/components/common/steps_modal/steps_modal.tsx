@@ -19,6 +19,7 @@ import { ToggleTokenLockStepContainer } from './toggle_token_lock_step';
 import { UnlockCollectiblesStepContainer } from './unlock_collectibles_step';
 import { WrapEthStepContainer } from './wrap_eth_step';
 import { WrapEethStepContainer } from './wrap_eeth_step';
+import { WrapEbtcStepContainer } from './wrap_ebtc_step';
 
 interface StateProps {
     currentStep: Step | null;
@@ -90,6 +91,9 @@ class StepsModal extends React.Component<Props> {
                     )}
                     {currentStep && currentStep.kind === StepKind.WrapEth && (
                         <WrapEthStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
+                    )}
+                    {currentStep && currentStep.kind === StepKind.WrapEbtc && (
+                        <WrapEbtcStepContainer key={stepIndex} buildStepsProgress={buildStepsProgress} />
                     )}
                   
                 </ModalContent>

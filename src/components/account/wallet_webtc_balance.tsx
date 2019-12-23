@@ -19,7 +19,6 @@ import { Card } from '../common/card';
 import { ArrowUpDownIcon } from '../common/icons/arrow_up_down_icon';
 import { LoadingWrapper } from '../common/loading';
 import { IconType, Tooltip } from '../common/tooltip';
-import { EBTC_DECIMALS } from '../../common/constants';
 
 import { WethModal } from './wallet_weth_modal';
 
@@ -222,7 +221,6 @@ class WalletWebtcBalance extends React.PureComponent<Props, State> {
                         style={theme.modalTheme}
                         totalEth={totalEth}
                         wethBalance={webtcBalance}
-                        decimals={EBTC_DECIMALS}
                     />
                 </>
             );
@@ -250,7 +248,11 @@ class WalletWebtcBalance extends React.PureComponent<Props, State> {
 
         try {
             await this.props.onStartWrapEBTCSteps(newWeth);
-        } finally {
+        }catch(e){
+        console.log('TCL: WalletWebtcBalance -> publichandleSubmit -> e', e);
+            
+        }
+        finally {
             this.setState({
                 isSubmitting: false,
             });
