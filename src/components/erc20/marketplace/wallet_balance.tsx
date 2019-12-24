@@ -136,8 +136,8 @@ interface StateProps {
     baseToken: Token | null;
     quoteToken: Token | null;
     ethAccount: string;
-    baseTokenBalance: TokenBalance | null;
-    quoteTokenBalance: TokenBalance | null;
+    baseTokenBalance: TokenBalance | null | undefined;
+    quoteTokenBalance: TokenBalance | null | undefined;
     totalEthBalance: BigNumber;
 }
 

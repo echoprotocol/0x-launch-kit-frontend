@@ -2,7 +2,7 @@ import { BigNumber, OrderStatus } from '0x.js';
 import { createSelector } from 'reselect';
 
 import { ERC20_APP_BASE_PATH } from '../common/constants';
-import { isWeth } from '../util/known_tokens';
+import { isWeth, isWeeth, isWebtc } from '../util/known_tokens';
 import {
     Collectible,
     MARKETPLACES,
@@ -61,9 +61,17 @@ export const getCurrentMarketPlace = createSelector(
     (currentRoute: string) => (currentRoute.includes(ERC20_APP_BASE_PATH) ? MARKETPLACES.ERC20 : MARKETPLACES.ERC721),
 );
 
-const searchToken = ({ tokenBalances, tokenToFind, wethTokenBalance }: SearchTokenBalanceObject) => {
+const searchToken = ({ tokenBalances, wethTokenBalance, weethTokenBalance, webtcTokenBalance, tokenToFind}: SearchTokenBalanceObject) => {
     if (tokenToFind && isWeth(tokenToFind.symbol)) {
         return wethTokenBalance;
+    }
+
+    if (tokenToFind && isWeeth(tokenToFind.symbol)) {
+        return weethTokenBalance;
+    }
+
+    if (tokenToFind && isWebtc(tokenToFind.symbol)) {
+        return webtcTokenBalance;
     }
     return (
         tokenBalances.find(
@@ -81,17 +89,21 @@ export const getTotalEthBalance = createSelector(
 export const getBaseTokenBalance = createSelector(
     getTokenBalances,
     getWethTokenBalance,
+    getWeethTokenBalance,
+    getWebtcTokenBalance,
     getBaseToken,
-    (tokenBalances: TokenBalance[], wethTokenBalance: TokenBalance | null, baseToken: Token | null) =>
-        searchToken({ tokenBalances, wethTokenBalance, tokenToFind: baseToken }),
+    (tokenBalances: TokenBalance[], wethTokenBalance: TokenBalance | null, weethTokenBalance: TokenBalance | null, webtcTokenBalance: TokenBalance | null, baseToken: Token | null) =>
+        searchToken({ tokenBalances, wethTokenBalance, weethTokenBalance, webtcTokenBalance, tokenToFind: baseToken }),
 );
 
 export const getQuoteTokenBalance = createSelector(
     getTokenBalances,
     getWethTokenBalance,
-    getQuoteToken,
-    (tokenBalances: TokenBalance[], wethTokenBalance: TokenBalance | null, quoteToken: Token | null) =>
-        searchToken({ tokenBalances, wethTokenBalance, tokenToFind: quoteToken }),
+    getWeethTokenBalance,
+    getWebtcTokenBalance,
+     getQuoteToken,
+    (tokenBalances: TokenBalance[], wethTokenBalance: TokenBalance | null, weethTokenBalance: TokenBalance | null, webtcTokenBalance: TokenBalance | null, quoteToken: Token | null) =>
+        searchToken({ tokenBalances, wethTokenBalance, weethTokenBalance, webtcTokenBalance, tokenToFind: quoteToken }),
 );
 
 export const getOpenOrders = createSelector(

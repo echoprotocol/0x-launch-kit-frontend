@@ -40,7 +40,9 @@ export interface TokenBalance {
 export interface SearchTokenBalanceObject {
     tokenBalances: TokenBalance[];
     tokenToFind: Token | null;
-    wethTokenBalance: TokenBalance | null;
+    wethTokenBalance?: TokenBalance | null;
+    weethTokenBalance?: TokenBalance | null;
+    webtcTokenBalance?: TokenBalance | null;
 }
 
 export enum Web3State {
