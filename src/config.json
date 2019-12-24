@@ -9,7 +9,7 @@
             "primaryColor": "#333333",
             "icon": "assets/icons/zrx.svg",
             "addresses": {
-                "3": "0x010000000000000000000000000000000000002f",
+                "3": "0x01000000000000000000000000000000000001bd",
                 "4": "0x0100000000000000000000000000000000000003",
                 "228": "0x010000000000000000000000000000000000005d"
             },
@@ -22,7 +22,7 @@
             "primaryColor": "#333333",
             "icon": "assets/icons/wecho.svg",
             "addresses": {
-                "3": "0x0100000000000000000000000000000000000030",
+                "3": "0x01000000000000000000000000000000000001be",
                 "4": "0x0100000000000000000000000000000000000004",
                 "228": "0x010000000000000000000000000000000000005e"
             },
@@ -30,28 +30,45 @@
             "displayDecimals": 2
         },
         {
-            "symbol": "rep",
-            "name": "Augur token",
+            "symbol": "weeth",
+            "name": "Wrapped EETH",
             "primaryColor": "#333333",
             "icon": "assets/icons/rep.svg",
             "addresses": {
-                "3": "0x0100000000000000000000000000000000000032"
+                "3": "0x01000000000000000000000000000000000001ba"
             },
             "decimals": 18,
-            "displayDecimals": 2
+            "displayDecimals": 4,
+            "assetId": "1.3.1"
+        },
+        {
+            "symbol": "webtc",
+            "name": "Wrapped EBTC",
+            "primaryColor": "#333333",
+            "icon": "assets/icons/rep.svg",
+            "addresses": {
+                "3": "0x01000000000000000000000000000000000001b9"
+            },
+            "decimals": 18,
+            "displayDecimals": 8,
+            "assetId": "1.3.2"
         }
     ],
     "pairs": [
         {
-            "base": "zrx",
+            "base": "webtc",
             "quote": "wecho"
         },
         {
-            "base": "wecho",
-            "quote": "rep"
+            "base": "weeth",
+            "quote": "wecho"
         },
         {
-            "base": "rep",
+            "base": "weeth",
+            "quote": "webtc"
+        },
+        {
+            "base": "webtc",
             "quote": "zrx"
         }
     ],

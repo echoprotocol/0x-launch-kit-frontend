@@ -3,7 +3,7 @@ import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
 import { getLogger } from '../util/logger';
 
-import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId } from './token_meta_data';
+import { getWethTokenFromTokensMetaDataByNetworkId, mapTokensMetaDataToTokenByNetworkId, getWeethTokenFromTokensMetaDataByNetworkId, getWebtcTokenFromTokensMetaDataByNetworkId } from './token_meta_data';
 import { Token } from './types';
 
 const logger = getLogger('Tokens::known_tokens .ts');
@@ -11,10 +11,15 @@ const logger = getLogger('Tokens::known_tokens .ts');
 export class KnownTokens {
     private readonly _tokens: Token[] = [];
     private readonly _wethToken: Token;
+    private readonly _weethToken: Token;
+    private readonly _webtcToken: Token;
+    
 
     constructor(knownTokensMetadata: TokenMetaData[]) {
-        this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensMetadata).filter(token => !isWeth(token.symbol));
+        this._tokens = mapTokensMetaDataToTokenByNetworkId(knownTokensMetadata).filter(token => !isWeth(token.symbol) && !isWeeth(token.symbol) && !isWebtc(token.symbol));
         this._wethToken = getWethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata);
+        this._weethToken = getWeethTokenFromTokensMetaDataByNetworkId(knownTokensMetadata);
+        this._webtcToken = getWebtcTokenFromTokensMetaDataByNetworkId(knownTokensMetadata);
     }
 
     public getTokenBySymbol = (symbol: string): Token => {
@@ -23,6 +28,12 @@ export class KnownTokens {
         if (!token) {
             if (symbolInLowerCaseScore === 'wecho') {
                 return this.getWethToken();
+            }
+            if (symbolInLowerCaseScore === 'weeth') {
+                return this.getWeethToken();
+            }
+            if (symbolInLowerCaseScore === 'webtc') {
+                return this.getWebtcToken();
             }
             const errorMessage = `Token with symbol ${symbol} not found in known tokens`;
             logger.log(errorMessage);
@@ -38,6 +49,16 @@ export class KnownTokens {
             // If it's not on the tokens list, we check if it's an wETH token
             // TODO - Maybe the this._tokens could be refactored to also have wETH inside
             token = this._wethToken.address === address ? this._wethToken : undefined;
+        }
+        if (!token) {
+            // If it's not on the tokens list, we check if it's an wETH token
+            // TODO - Maybe the this._tokens could be refactored to also have wETH inside
+            token = this._weethToken.address === address ? this._weethToken : undefined;
+        }
+        if (!token) {
+            // If it's not on the tokens list, we check if it's an wETH token
+            // TODO - Maybe the this._tokens could be refactored to also have wETH inside
+            token = this._webtcToken.address === address ? this._webtcToken : undefined;
         }
         if (!token) {
             throw new Error(`Token with address ${address} not found in known tokens`);
@@ -82,6 +103,14 @@ export class KnownTokens {
         return true;
     };
 
+    public getWebtcToken = (): Token => {
+        return this._webtcToken as Token;
+    };
+
+    public getWeethToken = (): Token => {
+        return this._weethToken as Token;
+    };
+
     public getWethToken = (): Token => {
         return this._wethToken as Token;
     };
@@ -114,6 +143,14 @@ export const isZrx = (token: string): boolean => {
 
 export const isWeth = (token: string): boolean => {
     return token === 'wecho';
+};
+
+export const isWeeth = (token: string): boolean => {
+    return token === 'weeth';
+};
+
+export const isWebtc = (token: string): boolean => {
+    return token === 'webtc';
 };
 
 export const isERC20AssetData = (assetData: string): boolean => {

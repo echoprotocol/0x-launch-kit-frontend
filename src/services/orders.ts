@@ -26,6 +26,7 @@ export const getAllOrdersAsUIOrders = async (baseToken: Token, quoteToken: Token
         const ordersAndTradersInfo = await contractWrappers.orderValidator.getOrdersAndTradersInfoAsync(
             orders,
             orders.map(o => o.makerAddress),
+            
         );
         return ordersToUIOrders(orders, baseToken, ordersAndTradersInfo);
     } catch (err) {

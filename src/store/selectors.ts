@@ -21,10 +21,18 @@ export const getEthAccount = (state: StoreState) => state.blockchain.ethAccount;
 export const getTokenBalances = (state: StoreState) => state.blockchain.tokenBalances;
 export const getWeb3State = (state: StoreState) => state.blockchain.web3State;
 export const getEthBalance = (state: StoreState) => state.blockchain.ethBalance;
+export const getEETHBalance = (state: StoreState) => state.blockchain.eethBalance;
+export const getEBTCBalance = (state: StoreState) => state.blockchain.ebtcBalance;
 export const getWethTokenBalance = (state: StoreState) => state.blockchain.wethTokenBalance;
+export const getWeethTokenBalance = (state: StoreState) => state.blockchain.weethTokenBalance;
+export const getWebtcTokenBalance = (state: StoreState) => state.blockchain.webtcTokenBalance;
 export const getConvertBalanceState = (state: StoreState) => state.blockchain.convertBalanceState;
 export const getWethBalance = (state: StoreState) =>
     state.blockchain.wethTokenBalance ? state.blockchain.wethTokenBalance.balance : new BigNumber(0);
+export const getWeethBalance = (state: StoreState) =>
+    state.blockchain.weethTokenBalance ? state.blockchain.weethTokenBalance.balance : new BigNumber(0);
+export const getWebtcBalance = (state: StoreState) =>
+    state.blockchain.webtcTokenBalance ? state.blockchain.webtcTokenBalance.balance : new BigNumber(0);
 export const getOrders = (state: StoreState) => state.relayer.orders;
 export const getUserOrders = (state: StoreState) => state.relayer.userOrders;
 export const getOrderPriceSelected = (state: StoreState) => state.ui.orderPriceSelected;

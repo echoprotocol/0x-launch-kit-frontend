@@ -28,6 +28,8 @@ interface Props extends React.ComponentProps<typeof Modal> {
     totalEth: BigNumber;
     wethBalance: BigNumber;
     ethInUsd: BigNumber | null;
+    tokenFrom: string;
+    tokenTo: string;
 }
 
 interface State {
@@ -246,7 +248,7 @@ const InputEth = styled<any>(BigNumberInput)`
     }
 `;
 
-const minEth = unitsInTokenAmount('0.05', ETH_DECIMALS);
+const minEth = unitsInTokenAmount('0.0000000000005', ETH_DECIMALS);
 const minSlidervalue = '0.00';
 const PLACEHOLDER = '0.000';
 
@@ -257,7 +259,7 @@ class WethModal extends React.Component<Props, State> {
     };
 
     public render = () => {
-        const { isSubmitting, totalEth, wethBalance, ethInUsd, ...restProps } = this.props;
+        const { isSubmitting, totalEth, wethBalance, ethInUsd, tokenFrom, tokenTo, ...restProps } = this.props;
         const { editing, selectedWeth } = this.state;
 
         const selectedEth = totalEth.minus(selectedWeth);
@@ -271,7 +273,6 @@ class WethModal extends React.Component<Props, State> {
             <Modal {...restProps}>
                 <CloseModalButton onClick={this._closeModal} />
                 <Title marginBottomSmall={ethInUsd}>Available Balance</Title>
-                {ethInUsd ? <ETHPrice>1 ECHO ≈ ${ethInUsd.toFixed(2)} </ETHPrice> : null}
                 <EthBoxes>
                     <EthBox boxType={ETHBoxType.Eth}>
                         {editing === Editing.Eth ? (
@@ -297,7 +298,7 @@ class WethModal extends React.Component<Props, State> {
                                 {selectedEthStr}
                             </EthBoxValue>
                         )}
-                        <EthBoxUnit>ETH</EthBoxUnit>
+                        <EthBoxUnit>{tokenFrom}</EthBoxUnit>
                     </EthBox>
                     <EthBox boxType={ETHBoxType.Weth}>
                         {editing === Editing.Weth ? (
@@ -323,7 +324,7 @@ class WethModal extends React.Component<Props, State> {
                                 {selectedWethStr}
                             </EthBoxValue>
                         )}
-                        <EthBoxUnit>wETH</EthBoxUnit>
+                        <EthBoxUnit>{tokenTo}</EthBoxUnit>
                         <TooltipStyled>
                             <Tooltip description="ECHO cannot be traded with other tokens directly.<br />You need to convert it to WECHO first.<br />WECHO can be converted back to ECHO at any time." />
                         </TooltipStyled>
