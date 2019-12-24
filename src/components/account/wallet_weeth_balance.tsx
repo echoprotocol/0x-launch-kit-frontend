@@ -176,10 +176,10 @@ class WalletWeethBalance extends React.PureComponent<Props, State> {
 
         const { isSubmitting } = this.state;
         const totalEth = eethBalance.plus(weethBalance);
-        const wethToken = getKnownTokens().getWethToken();
-        const formattedEth = tokenAmountInUnits(eethBalance, wethToken.decimals, wethToken.displayDecimals);
-        const formattedWeth = tokenAmountInUnits(weethBalance, wethToken.decimals, wethToken.displayDecimals);
-        const formattedTotalEth = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
+        const weethToken = getKnownTokens().getWeethToken();
+        const formattedEth = tokenAmountInUnits(eethBalance, weethToken.decimals, weethToken.displayDecimals);
+        const formattedWeth = tokenAmountInUnits(weethBalance, weethToken.decimals, weethToken.displayDecimals);
+        const formattedTotalEth = tokenAmountInUnits(totalEth, weethToken.decimals, weethToken.displayDecimals);
 
         let content: React.ReactNode;
 
@@ -221,7 +221,8 @@ class WalletWeethBalance extends React.PureComponent<Props, State> {
                         style={theme.modalTheme}
                         totalEth={totalEth}
                         wethBalance={weethBalance}
-                    />
+                        tokenFrom="EETH"
+                        tokenTo={weethToken.symbol.toLocaleUpperCase()}/>
                 </>
             );
         }

@@ -220,6 +220,8 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         style={theme.modalTheme}
                         totalEth={totalEth}
                         wethBalance={wethBalance}
+                        tokenFrom="ECHO"
+                        tokenTo={wethToken.symbol.toLocaleUpperCase()}
                     />
                 </>
             );

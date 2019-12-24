@@ -14,6 +14,7 @@
         "logdown": "^3.2.8",
         "query-string": "^6.4.0",
         "react": "^16.8.6",
+        "echo-web3": "0.1.8",
         "react-copy-to-clipboard": "^5.0.1",
         "react-dom": "^16.8.6",
         "react-modal": "^3.8.1",

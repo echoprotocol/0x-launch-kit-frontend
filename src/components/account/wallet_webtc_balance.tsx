@@ -221,6 +221,8 @@ class WalletWebtcBalance extends React.PureComponent<Props, State> {
                         style={theme.modalTheme}
                         totalEth={totalEth}
                         wethBalance={webtcBalance}
+                        tokenFrom="EBTC"
+                        tokenTo={webtcToken.symbol.toLocaleUpperCase()}
                     />
                 </>
             );
