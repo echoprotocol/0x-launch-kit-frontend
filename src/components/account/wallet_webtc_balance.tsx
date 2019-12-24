@@ -250,9 +250,6 @@ class WalletWebtcBalance extends React.PureComponent<Props, State> {
 
         try {
             await this.props.onStartWrapEBTCSteps(newWeth);
-        }catch(e){
-        console.log('TCL: WalletWebtcBalance -> publichandleSubmit -> e', e);
-            
         }
         finally {
             this.setState({
