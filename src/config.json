@@ -56,14 +56,21 @@
     ],
     "pairs": [
         {
+            "base": "webtc",
+            "quote": "wecho"
+        },
+        {
+            "base": "weeth",
+            "quote": "wecho"
+        },
+        {
             "base": "weeth",
             "quote": "webtc"
         },
         {
-            "base": "wecho",
-            "quote": "weeth"
+            "base": "webtc",
+            "quote": "zrx"
         }
-        
     ],
     "marketFilters": [
         {

@@ -43,7 +43,7 @@ export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | undefined> 
         echoWeb3Instance = echoWeb3Instance;
 
         // Subscriptions register
-        echojslib.extension.subscribeSwitchAccount(() => {
+        echojslib.extension.subscribeAccountChanged(() => {
             // waiting the first setting of an account before using of web3
             if (isFirstSwitchAccount) {
                 isFirstSwitchAccount = false;
