@@ -246,7 +246,7 @@ const InputEth = styled<any>(BigNumberInput)`
     }
 `;
 
-const minEth = unitsInTokenAmount('0.000000000005', ETH_DECIMALS);
+const minEth = unitsInTokenAmount('0.0000000000005', ETH_DECIMALS);
 const minSlidervalue = '0.00';
 const PLACEHOLDER = '0.000';
 

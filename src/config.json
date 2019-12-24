@@ -38,7 +38,7 @@
                 "3": "0x01000000000000000000000000000000000001ba"
             },
             "decimals": 18,
-            "displayDecimals": 2,
+            "displayDecimals": 4,
             "assetId": "1.3.1"
         },
         {
@@ -50,7 +50,7 @@
                 "3": "0x01000000000000000000000000000000000001b9"
             },
             "decimals": 18,
-            "displayDecimals": 12,
+            "displayDecimals": 8,
             "assetId": "1.3.2"
         }
     ],

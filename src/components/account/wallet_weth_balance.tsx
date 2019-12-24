@@ -230,6 +230,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                 <Card title={inDropdown ? '' : 'ECHO / wECHO Balances'} className={className}>
                     <Content>{content}</Content>
                 </Card>
+              
             </>
         );
     };

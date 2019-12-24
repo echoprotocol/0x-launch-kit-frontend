@@ -2,7 +2,7 @@
 import { BigNumber, MetamaskSubprovider, signatureUtils } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
-import { COLLECTIBLE_ADDRESS, NETWORK_ID, START_BLOCK_LIMIT, EETH_ASSET_ID, EBTC_ASSET_ID, ECHO_ASSET_ID } from '../../common/constants';
+import { COLLECTIBLE_ADDRESS, NETWORK_ID, START_BLOCK_LIMIT, EETH_ASSET_ID, EBTC_ASSET_ID, ECHO_ASSET_ID, EBTC_DECIMALS } from '../../common/constants';
 import { ConvertBalanceMustNotBeEqualException } from '../../exceptions/convert_balance_must_not_be_equal_exception';
 import { SignedOrderException } from '../../exceptions/signed_order_exception';
 import { subscribeToFillEvents } from '../../services/exchange';
@@ -264,7 +264,7 @@ export const updateWebtcBalance: ThunkCreator<Promise<any>> = (newWebtcBalance: 
         const webtcBalance = getWebtcBalance(state);
         const webtcAddress = getKnownTokens().getWebtcToken().address;
 
-        let txHash: string;
+        let txHash = "";
         if (webtcBalance.isLessThan(newWebtcBalance)) {
             txHash = await contractWrappers.webtcToken.depositAsync(
                 webtcAddress,
@@ -273,9 +273,15 @@ export const updateWebtcBalance: ThunkCreator<Promise<any>> = (newWebtcBalance: 
                 getTransactionOptions(gasPrice),
             );
         } else if (webtcBalance.isGreaterThan(newWebtcBalance)) {
+            const delta = webtcBalance.minus(newWebtcBalance);
+            const devider = new BigNumber(10).pow(EBTC_DECIMALS)
+            const valueInOriginalWEBTC = delta.dividedBy(devider);
+            const normalizedWEBTCValue = valueInOriginalWEBTC.toFixed(8, BigNumber.ROUND_DOWN);
+            const withrawAmount = new BigNumber(normalizedWEBTCValue).multipliedBy(devider)
+
             txHash = await contractWrappers.webtcToken.withdrawAsync(
                 webtcAddress,
-                webtcBalance.minus(newWebtcBalance),
+                withrawAmount,
                 ethAccount,
                 getTransactionOptions(gasPrice),
             );
