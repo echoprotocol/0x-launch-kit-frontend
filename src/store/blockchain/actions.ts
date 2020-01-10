@@ -434,6 +434,7 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
                 dispatch(initWalletERC721());
             }
         } catch (error) {
+            console.log(error);
             // Web3Error
             logger.error('There was an error when initializing the wallet', error);
             dispatch(setWeb3State(Web3State.Error));
@@ -444,7 +445,7 @@ export const initWallet: ThunkCreator<Promise<any>> = () => {
 const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
     return async (dispatch, getState, { initializeWeb3Wrapper }) => {
         const web3Wrapper = await initializeWeb3Wrapper();
-
+        
         if (web3Wrapper) {
             const networkId = await web3Wrapper.getNetworkIdAsync();
             if (networkId !== NETWORK_ID) {
