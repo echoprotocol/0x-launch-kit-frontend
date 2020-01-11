@@ -13,6 +13,10 @@ export const TX_DEFAULTS = {
     shouldValidate: true,
 };
 
+export const ECHO_ASSET_ID = '1.3.0';
+export const EETH_ASSET_ID = '1.3.1';
+export const EBTC_ASSET_ID = '1.3.2';
+
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export const FEE_RECIPIENT = process.env.REACT_APP_FEE_RECIPIENT || ZERO_ADDRESS;
@@ -21,17 +25,18 @@ export const AFFILIATE_FEE_PERCENTAGE: number = process.env.REACT_APP_AFFILIATE_
     : 0;
 
 export const ETH_DECIMALS = 18;
+export const EBTC_DECIMALS = 18;
 
-export const UI_DECIMALS_DISPLAYED_ON_STEP_MODALS = 3;
+export const UI_DECIMALS_DISPLAYED_ON_STEP_MODALS = 8;
 export const UI_DECIMALS_DISPLAYED_SPREAD_PERCENT = 2;
 export const UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION = 2;
 export const UI_DECIMALS_DISPLAYED_ORDER_SIZE = 4;
 export const UI_DECIMALS_DISPLAYED_PRICE_ETH = 7;
 export const UI_GENERAL_TITLE = 'Launch Kit';
 
-export const METAMASK_EXTENSION_URL = 'https://metamask.io/';
+export const METAMASK_EXTENSION_URL = 'https://chrome.google.com/webstore/detail/echo-bridge/ginklfodpcgldnicehmlpehfmgjhbdcl';
 export const METAMASK_CHROME_EXTENSION_DOWNLOAD_URL =
-    'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn';
+    'https://chrome.google.com/webstore/detail/echo-bridge/ginklfodpcgldnicehmlpehfmgjhbdcl';
 
 // Default value is enabled, 0 is disabled
 export const UI_UPDATE_CHECK_INTERVAL: number = process.env.REACT_APP_UI_UPDATE_CHECK_INTERVAL

@@ -19,13 +19,13 @@ import {
     convertBalanceStateAsync,
     stepsModalAdvanceStep,
     updateTokenBalances,
-    updateWethBalance,
+    updateWebtcBalance,
 } from '../../../store/actions';
-import { getEstimatedTxTimeMs, getEthBalance, getStepsModalCurrentStep } from '../../../store/selectors';
+import { getEstimatedTxTimeMs, getEBTCBalance, getStepsModalCurrentStep } from '../../../store/selectors';
 import { getKnownTokens } from '../../../util/known_tokens';
 import { sleep } from '../../../util/sleep';
 import { tokenAmountInUnits, tokenAmountInUnitsToBigNumber } from '../../../util/tokens';
-import { StepWrapEth, StoreState } from '../../../util/types';
+import { StepWrapEbtc, StoreState } from '../../../util/types';
 
 import { BaseStepModal } from './base_step_modal';
 import { StepItem } from './steps_progress';
@@ -35,12 +35,12 @@ interface OwnProps {
 }
 interface StateProps {
     estimatedTxTimeMs: number;
-    step: StepWrapEth;
-    ethBalance: BigNumber;
+    step: StepWrapEbtc;
+    ebtcBalance: BigNumber;
 }
 
 interface DispatchProps {
-    updateWeth: (newWethBalance: BigNumber) => Promise<any>;
+    updateWebtc: (newWethBalance: BigNumber) => Promise<any>;
     updateTokenBalances: (txHash: string) => Promise<any>;
     convertBalanceState: { request: () => void; success: () => void; failure: () => void };
     advanceStep: () => void;
@@ -52,7 +52,7 @@ interface State {
     errorCaption: string;
 }
 
-class WrapEthStep extends React.Component<Props, State> {
+class WrapEbtcStep extends React.Component<Props, State> {
     public state = {
         errorCaption: '',
     };
@@ -60,23 +60,23 @@ class WrapEthStep extends React.Component<Props, State> {
     public render = () => {
         const { buildStepsProgress, estimatedTxTimeMs, step } = this.props;
 
-        const { context, currentWethBalance, newWethBalance } = step;
-        const amount = newWethBalance.minus(currentWethBalance);
-        const wethToken = getKnownTokens().getWethToken();
-        const ethAmount = tokenAmountInUnitsToBigNumber(amount.abs(), wethToken.decimals).toFixed(
+        const { context, currentWebtcBalance, newWebtcBalance } = step;
+        const amount = newWebtcBalance.minus(currentWebtcBalance);
+        const webtcToken = getKnownTokens().getWebtcToken();
+        const ebtcAmount = tokenAmountInUnitsToBigNumber(amount.abs(), webtcToken.decimals).toFixed(
             UI_DECIMALS_DISPLAYED_ON_STEP_MODALS,
         );
 
-        const ethToWeth = amount.isGreaterThan(0);
-        const convertingFrom = ethToWeth ? 'ECHO' : 'wECHO';
-        const convertingTo = ethToWeth ? 'wECHO' : 'ECHO';
+        const ebtcToWebtc = amount.isGreaterThan(0);
+        const convertingFrom = ebtcToWebtc ? 'ECHO' : 'wECHO';
+        const convertingTo = ebtcToWebtc ? 'wECHO' : 'ECHO';
 
         const isOrder = context === 'order';
 
         const buildMessage = (prefix: string) => {
             return [
                 prefix,
-                ethAmount,
+                ebtcAmount,
                 convertingFrom,
                 isOrder ? 'for trading' : null, // only show "for trading" when creating an order
                 `(${convertingFrom} to ${convertingTo}).`,
@@ -87,7 +87,7 @@ class WrapEthStep extends React.Component<Props, State> {
 
         const title = `Convert ${convertingFrom}`;
 
-        const confirmCaption = `Confirm on Bridge to convert ${ethAmount} ${convertingFrom} into ${convertingTo}.`;
+        const confirmCaption = `Confirm on Bridge to convert ${ebtcAmount} ${convertingFrom} into ${convertingTo}.`;
         const loadingCaption = buildMessage('Converting');
         const doneCaption = buildMessage('Converted');
         const loadingFooterCaption = `Waiting for confirmation....`;
@@ -112,11 +112,11 @@ class WrapEthStep extends React.Component<Props, State> {
     };
 
     private readonly _convertWeth = async ({ onLoading, onDone, onError }: any) => {
-        const { step, advanceStep, ethBalance, updateWeth, convertBalanceState } = this.props;
-        const { currentWethBalance, newWethBalance } = step;
+        const { step, advanceStep, ebtcBalance, updateWebtc, convertBalanceState } = this.props;
+        const { currentWebtcBalance, newWebtcBalance } = step;
         const updateBalances = this.props.updateTokenBalances;
         try {
-            const convertTxHash = await updateWeth(newWethBalance);
+            const convertTxHash = await updateWebtc(newWebtcBalance);
             onLoading();
             convertBalanceState.request();
             await updateBalances(convertTxHash);
@@ -131,10 +131,10 @@ class WrapEthStep extends React.Component<Props, State> {
                 exception = new UserDeniedTransactionSignatureException();
                 errorCaption = USER_DENIED_TRANSACTION_SIGNATURE_ERR;
             } else if (err.toString().includes(INSUFFICIENT_ETH_BALANCE_FOR_DEPOSIT)) {
-                const amount = currentWethBalance.isGreaterThanOrEqualTo(newWethBalance)
-                    ? currentWethBalance.minus(newWethBalance)
-                    : newWethBalance.minus(currentWethBalance);
-                const currentEthAmount = tokenAmountInUnits(ethBalance, ETH_DECIMALS);
+                const amount = currentWebtcBalance.isGreaterThanOrEqualTo(newWebtcBalance)
+                    ? currentWebtcBalance.minus(newWebtcBalance)
+                    : newWebtcBalance.minus(currentWebtcBalance);
+                const currentEthAmount = tokenAmountInUnits(ebtcBalance, ETH_DECIMALS);
                 const ethNeeded = tokenAmountInUnits(amount, ETH_DECIMALS);
                 exception = new InsufficientEthDepositBalanceException(currentEthAmount, ethNeeded);
                 errorCaption = `You have ${currentEthAmount} ECHO but you need ${ethNeeded} ECHO to make this operation`;
@@ -157,16 +157,16 @@ class WrapEthStep extends React.Component<Props, State> {
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
         estimatedTxTimeMs: getEstimatedTxTimeMs(state),
-        step: getStepsModalCurrentStep(state) as StepWrapEth,
-        ethBalance: getEthBalance(state),
+        step: getStepsModalCurrentStep(state) as StepWrapEbtc,
+        ebtcBalance: getEBTCBalance(state),
     };
 };
 
-const WrapEthStepContainer = connect(
+const WrapEbtcStepContainer = connect(
     mapStateToProps,
     (dispatch: any) => {
         return {
-            updateWeth: (newWethBalance: BigNumber) => dispatch(updateWethBalance(newWethBalance)),
+            updateWebtc: (newWethBalance: BigNumber) => dispatch(updateWebtcBalance(newWethBalance)),
             updateTokenBalances: (txHash: string) => dispatch(updateTokenBalances(txHash)),
             advanceStep: () => dispatch(stepsModalAdvanceStep()),
             convertBalanceState: {
@@ -176,6 +176,6 @@ const WrapEthStepContainer = connect(
             },
         };
     },
-)(WrapEthStep);
+)(WrapEbtcStep);
 
-export { WrapEthStep, WrapEthStepContainer };
+export { WrapEbtcStep, WrapEbtcStepContainer };

@@ -7,11 +7,16 @@ import * as actions from '../actions';
 import { RootAction } from '../reducers';
 
 const initialBlockchainState: BlockchainState = {
+    echoAccountName: '',
     ethAccount: '',
     web3State: Web3State.Loading,
     tokenBalances: [],
     ethBalance: new BigNumber(0),
+    eethBalance: new BigNumber(0),
+    ebtcBalance: new BigNumber(0),
     wethTokenBalance: null,
+    weethTokenBalance: null,
+    webtcTokenBalance: null,
     gasInfo: {
         gasPriceInWei: DEFAULT_GAS_PRICE,
         estimatedTimeMs: DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,
@@ -29,6 +34,10 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
             return { ...state, tokenBalances: action.payload };
         case getType(actions.setWethTokenBalance):
             return { ...state, wethTokenBalance: action.payload };
+        case getType(actions.setWeethTokenBalance):
+            return { ...state, weethTokenBalance: action.payload }; 
+        case getType(actions.setWebtcTokenBalance):
+            return { ...state, webtcTokenBalance: action.payload };     
         case getType(actions.setGasInfo):
             return { ...state, gasInfo: action.payload };
         case getType(actions.setWethBalance):
@@ -36,13 +45,37 @@ export function blockchain(state: BlockchainState = initialBlockchainState, acti
                 ...state,
                 wethTokenBalance: state.wethTokenBalance
                     ? {
-                          ...state.wethTokenBalance,
-                          balance: action.payload,
-                      }
+                        ...state.wethTokenBalance,
+                        balance: action.payload,
+                    }
+                    : null,
+            };
+        case getType(actions.setWeethBalance):
+            return {
+                ...state,
+                weethTokenBalance: state.weethTokenBalance
+                    ? {
+                        ...state.weethTokenBalance,
+                        balance: action.payload,
+                    }
+                    : null,
+            };
+        case getType(actions.setWebtcBalance):
+            return {
+                ...state,
+                webtcTokenBalance: state.webtcTokenBalance
+                    ? {
+                        ...state.webtcTokenBalance,
+                        balance: action.payload,
+                    }
                     : null,
             };
         case getType(actions.setEthBalance):
             return { ...state, ethBalance: action.payload };
+        case getType(actions.setEethBalance):
+            return { ...state, eethBalance: action.payload };
+        case getType(actions.setEbtcBalance):
+            return { ...state, ebtcBalance: action.payload };
         case getType(actions.convertBalanceStateAsync.request):
             return { ...state, convertBalanceState: ConvertBalanceState.Request };
         case getType(actions.convertBalanceStateAsync.failure):

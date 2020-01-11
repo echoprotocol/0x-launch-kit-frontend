@@ -23,9 +23,11 @@ import {
     StepKind,
     StepToggleTokenLock,
     StepWrapEth,
+    StepWrapEeth,
     ThunkCreator,
     Token,
     TokenBalance,
+    StepWrapEbtc
 } from '../../util/types';
 import * as selectors from '../selectors';
 
@@ -88,6 +90,43 @@ export const startWrapEtherSteps: ThunkCreator = (newWethBalance: BigNumber) => 
         dispatch(setStepsModalDoneSteps([]));
     };
 };
+
+export const startWrapEETHSteps: ThunkCreator = (newWeethBalance: BigNumber) => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const currentWeethBalance = selectors.getWeethBalance(state);
+
+        const wrapEethStep: StepWrapEeth = {
+            kind: StepKind.WrapEeth,
+            currentWeethBalance,
+            newWeethBalance,
+            context: 'standalone',
+        };
+
+        dispatch(setStepsModalCurrentStep(wrapEethStep));
+        dispatch(setStepsModalPendingSteps([]));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
+export const startWrapEBTCSteps: ThunkCreator = (newWebtcBalance: BigNumber) => {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const currentWebtcBalance = selectors.getWebtcBalance(state);
+
+        const wrapEbtcStep: StepWrapEbtc = {
+            kind: StepKind.WrapEbtc,
+            currentWebtcBalance,
+            newWebtcBalance,
+            context: 'standalone',
+        };
+
+        dispatch(setStepsModalCurrentStep(wrapEbtcStep));
+        dispatch(setStepsModalPendingSteps([]));
+        dispatch(setStepsModalDoneSteps([]));
+    };
+};
+
 
 export const startSellCollectibleSteps: ThunkCreator = (
     collectible: Collectible,
@@ -163,12 +202,16 @@ export const startBuySellLimitSteps: ThunkCreator = (
         const quoteToken = selectors.getQuoteToken(state) as Token;
         const tokenBalances = selectors.getTokenBalances(state) as TokenBalance[];
         const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+        const weethTokenBalance = selectors.getWeethTokenBalance(state) as TokenBalance;
+        const webtcTokenBalance = selectors.getWebtcTokenBalance(state) as TokenBalance;
 
         const buySellLimitFlow: Step[] = createBuySellLimitSteps(
             baseToken,
             quoteToken,
             tokenBalances,
             wethTokenBalance,
+            weethTokenBalance,
+            webtcTokenBalance,
             amount,
             price,
             side,
@@ -184,11 +227,16 @@ export const startBuySellLimitSteps: ThunkCreator = (
 export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: OrderSide, takerFee: BigNumber) => {
     return async (dispatch, getState) => {
         const state = getState();
+
         const baseToken = selectors.getBaseToken(state) as Token;
         const quoteToken = selectors.getQuoteToken(state) as Token;
         const tokenBalances = selectors.getTokenBalances(state) as TokenBalance[];
         const wethTokenBalance = selectors.getWethTokenBalance(state) as TokenBalance;
+        const weethTokenBalance = selectors.getWeethTokenBalance(state) as TokenBalance;
+        const webtcTokenBalance = selectors.getWebtcTokenBalance(state) as TokenBalance;
         const ethBalance = selectors.getEthBalance(state);
+        const eethBalance = selectors.getEETHBalance(state);
+        const ebtcBalance = selectors.getEBTCBalance(state);
         const totalEthBalance = selectors.getTotalEthBalance(state);
         const quoteTokenBalance = selectors.getQuoteTokenBalance(state);
         const baseTokenBalance = selectors.getBaseTokenBalance(state);
@@ -236,7 +284,11 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
             quoteToken,
             tokenBalances,
             wethTokenBalance,
+            weethTokenBalance,
+            webtcTokenBalance,
             ethBalance,
+            eethBalance,
+            ebtcBalance,
             amount,
             side,
             price,
@@ -246,6 +298,7 @@ export const startBuySellMarketSteps: ThunkCreator = (amount: BigNumber, side: O
         dispatch(setStepsModalCurrentStep(buySellMarketFlow[0]));
         dispatch(setStepsModalPendingSteps(buySellMarketFlow.slice(1)));
         dispatch(setStepsModalDoneSteps([]));
+        
     };
 };
 

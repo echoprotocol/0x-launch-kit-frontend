@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { WalletTokenBalancesContainer, WalletWethBalanceContainer } from '../../account';
+import { WalletTokenBalancesContainer, WalletWethBalanceContainer, WalletWeethBalanceContainer, WalletWebtcBalanceContainer } from '../../account';
 import { CheckMetamaskStateModalContainer } from '../../common/check_metamask_state_modal_container';
 import { ColumnNarrow } from '../../common/column_narrow';
 import { ColumnWide } from '../../common/column_wide';
@@ -20,6 +20,8 @@ export const MyWallet = () => (
         <CheckMetamaskStateModalContainer>
             <ColumnNarrow>
                 <WalletWethBalanceContainer />
+                <WalletWeethBalanceContainer />
+                <WalletWebtcBalanceContainer />
             </ColumnNarrow>
             <ColumnWideMyWallet>
                 <WalletTokenBalancesContainer />

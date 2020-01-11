@@ -1,47 +1,67 @@
 import { Web3Wrapper } from '@0x/web3-wrapper';
 
+// @ts-ignore
+import EchoWeb3, { BridgeProvider } from 'echo-web3';
+// @ts-ignore
+import * as Web3 from 'web3';
 import { sleep } from '../util/sleep';
 
+let isFirstSwitchAccount = true;
+let isFirstSwitchNetwork = true;
+
+let echoWeb3Instance: EchoWeb3 | null = null;
 let web3Wrapper: Web3Wrapper | null = null;
+const WrappedEchoWeb3 = EchoWeb3(Web3);
 
 export const isMetamaskInstalled = (): boolean => {
-    const { ethereum, web3 } = window;
-    return ethereum || web3;
+    const { echojslib } = window as any;
+    return echojslib && echojslib.isEchoBridge;
 };
 
-export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | null> => {
-    const { ethereum, web3, location } = window;
+export const initializeWeb3Wrapper = async (): Promise<Web3Wrapper | undefined> => {
+    while (!(window as any).echojslib) {
+        await sleep(50);
+    }
+
+    const { location } = window;
+    const { echojslib } = window as any;
 
     if (web3Wrapper) {
+        await echoWeb3Instance.currentProvider.enable();
         return web3Wrapper;
     }
 
-    if (ethereum) {
-        try {
-            web3Wrapper = new Web3Wrapper(ethereum);
-            // Request account access if needed
-            await ethereum.enable();
+    if (echojslib && echojslib.isEchoBridge) {
+        const bridgeProvider = new BridgeProvider();
+        echoWeb3Instance = new WrappedEchoWeb3(bridgeProvider);
 
-            // Subscriptions register
-            ethereum.on('accountsChanged', async (accounts: []) => {
-                // Reload to avoid MetaMask bug: "MetaMask - RPC Error: Internal JSON-RPC"
-                location.reload();
-            });
-            ethereum.on('networkChanged', async (network: number) => {
-                location.reload();
-            });
+        await bridgeProvider.init();
+        await echoWeb3Instance.currentProvider.enable();
 
-            return web3Wrapper;
-        } catch (error) {
-            // The user denied account access
-            return null;
-        }
-    } else if (web3) {
-        web3Wrapper = new Web3Wrapper(web3.currentProvider);
+        // Request account access if needed
+        web3Wrapper = new Web3Wrapper(echoWeb3Instance.currentProvider);
+        echoWeb3Instance = echoWeb3Instance;
+
+        // Subscriptions register
+        echojslib.extension.subscribeAccountChanged(() => {
+            // waiting the first setting of an account before using of web3
+            if (isFirstSwitchAccount) {
+                isFirstSwitchAccount = false;
+            } else {
+                location.reload();
+            }
+        });
+
+        echojslib.extension.subscribeSwitchNetwork(() => {
+            if (isFirstSwitchNetwork) {
+                isFirstSwitchNetwork = false;
+            } else {
+                location.reload();
+            }
+        });
+
         return web3Wrapper;
-    } else {
-        //  The user does not have metamask installed
-        return null;
+
     }
 };
 

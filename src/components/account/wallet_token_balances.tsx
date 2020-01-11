@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { startToggleTokenLockSteps } from '../../store/actions';
-import { getEthBalance, getTokenBalances, getWeb3State, getWethTokenBalance } from '../../store/selectors';
+import { getEthBalance, getTokenBalances, getWeb3State, getWethTokenBalance, getWeethTokenBalance, getWebtcTokenBalance } from '../../store/selectors';
 import { tokenAmountInUnits } from '../../util/tokens';
 import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
@@ -17,6 +17,8 @@ interface StateProps {
     tokenBalances: TokenBalance[];
     web3State: Web3State;
     wethTokenBalance: TokenBalance | null;
+    weethTokenBalance: TokenBalance | null;
+    webtcTokenBalance: TokenBalance | null;
 }
 
 interface DispatchProps {
@@ -122,16 +124,22 @@ const LockCell = ({ isUnlocked, onClick }: LockCellProps) => {
 
 class WalletTokenBalances extends React.PureComponent<Props> {
     public render = () => {
-        const { ethBalance, tokenBalances, onStartToggleTokenLockSteps, web3State, wethTokenBalance } = this.props;
+        const { ethBalance, tokenBalances, onStartToggleTokenLockSteps, web3State, wethTokenBalance, weethTokenBalance, webtcTokenBalance} = this.props;
 
-        if (!wethTokenBalance) {
+        if (!wethTokenBalance || !weethTokenBalance || !webtcTokenBalance) {
             return null;
         }
 
         const wethToken = wethTokenBalance.token;
+        const weethToken = weethTokenBalance.token;
+        const webtcToken = webtcTokenBalance.token;
         const totalEth = wethTokenBalance.balance.plus(ethBalance);
         const formattedTotalEthBalance = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
+        const formattedTotalEethBalance = tokenAmountInUnits(weethTokenBalance.balance, weethToken.decimals, weethToken.displayDecimals);
+        const formattedTotalEbtcBalance = tokenAmountInUnits(webtcTokenBalance.balance, webtcToken.decimals, webtcToken.displayDecimals);
         const onTotalEthClick = () => onStartToggleTokenLockSteps(wethTokenBalance.token, wethTokenBalance.isUnlocked);
+        const onTotalEethClick = () => onStartToggleTokenLockSteps(weethTokenBalance.token, weethTokenBalance.isUnlocked);
+        const onTotalEbtcClick = () => onStartToggleTokenLockSteps(webtcTokenBalance.token, webtcTokenBalance.isUnlocked);
 
         const totalEthRow = (
             <TR>
@@ -143,7 +151,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                     />
                 </TokenTD>
                 <CustomTDTokenName styles={{ borderBottom: true }}>
-                    <TokenName>ETH Total</TokenName> {` (ETH + wETH)`}
+                    <TokenName>ECHO Total</TokenName> {` (ECHO + wECHO)`}
                 </CustomTDTokenName>
                 <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
                     {formattedTotalEthBalance}
@@ -153,6 +161,56 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                 <LockCell
                     isUnlocked={wethTokenBalance.isUnlocked}
                     onClick={onTotalEthClick}
+                    styles={{ borderBottom: true, textAlign: 'center' }}
+                />
+            </TR>
+        );
+
+        const eethRow = (
+            <TR>
+                <TokenTD>
+                    <TokenIconStyled
+                        symbol={wethToken.symbol}
+                        primaryColor={wethToken.primaryColor}
+                        icon={wethToken.icon}
+                    />
+                </TokenTD>
+                <CustomTDTokenName styles={{ borderBottom: true }}>
+                    <TokenName>wEETH</TokenName> {` wEETH`}
+                </CustomTDTokenName>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
+                    {formattedTotalEethBalance}
+                </CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
+                <LockCell
+                    isUnlocked={weethTokenBalance.isUnlocked}
+                    onClick={onTotalEethClick}
+                    styles={{ borderBottom: true, textAlign: 'center' }}
+                />
+            </TR>
+        );
+
+        const ebtcRow = (
+            <TR>
+                <TokenTD>
+                    <TokenIconStyled
+                        symbol={wethToken.symbol}
+                        primaryColor={wethToken.primaryColor}
+                        icon={wethToken.icon}
+                    />
+                </TokenTD>
+                <CustomTDTokenName styles={{ borderBottom: true }}>
+                    <TokenName>wEBTC</TokenName> {` wEBTC`}
+                </CustomTDTokenName>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
+                    {formattedTotalEbtcBalance}
+                </CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
+                <LockCell
+                    isUnlocked={webtcTokenBalance.isUnlocked}
+                    onClick={onTotalEbtcClick}
                     styles={{ borderBottom: true, textAlign: 'center' }}
                 />
             </TR>
@@ -202,6 +260,8 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                     </THead>
                     <TBody>
                         {totalEthRow}
+                        {eethRow}
+                        {ebtcRow}
                         {tokensRows}
                     </TBody>
                 </Table>
@@ -218,6 +278,8 @@ const mapStateToProps = (state: StoreState): StateProps => {
         tokenBalances: getTokenBalances(state),
         web3State: getWeb3State(state),
         wethTokenBalance: getWethTokenBalance(state),
+        weethTokenBalance: getWeethTokenBalance(state),
+        webtcTokenBalance: getWebtcTokenBalance(state),
     };
 };
 const mapDispatchToProps = {

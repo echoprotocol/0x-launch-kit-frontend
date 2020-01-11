@@ -3,13 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
-import { startWrapEtherSteps } from '../../store/actions';
+import { startWrapEETHSteps } from '../../store/actions';
 import {
     getConvertBalanceState,
-    getEthBalance,
+    getEETHBalance,
     getEthInUsd,
     getWeb3State,
-    getWethBalance,
+    getWeethBalance,
 } from '../../store/selectors';
 import { Theme, themeDimensions } from '../../themes/commons';
 import { getKnownTokens } from '../../util/known_tokens';
@@ -23,15 +23,15 @@ import { IconType, Tooltip } from '../common/tooltip';
 import { WethModal } from './wallet_weth_modal';
 
 interface StateProps {
-    ethBalance: BigNumber;
+    eethBalance: BigNumber;
     ethInUsd: BigNumber | null;
     web3State: Web3State;
-    wethBalance: BigNumber;
+    weethBalance: BigNumber;
     convertBalanceState: ConvertBalanceState;
 }
 
 interface DispatchProps {
-    onStartWrapEtherSteps: (newBalance: BigNumber) => Promise<any>;
+    onStartWrapEETHSteps: (newBalance: BigNumber) => Promise<any>;
 }
 
 interface OwnProps {
@@ -155,7 +155,7 @@ const Note = styled.p`
     text-align: center;
 `;
 
-class WalletWethBalance extends React.PureComponent<Props, State> {
+class WalletWeethBalance extends React.PureComponent<Props, State> {
     public readonly state: State = {
         modalIsOpen: false,
         selectedWeth: '0',
@@ -164,21 +164,22 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
     public render = () => {
         const {
-            ethBalance,
+            eethBalance,
             web3State,
-            wethBalance,
+            weethBalance,
             ethInUsd,
             theme,
             inDropdown,
             className,
             convertBalanceState,
         } = this.props;
+
         const { isSubmitting } = this.state;
-        const totalEth = ethBalance.plus(wethBalance);
-        const wethToken = getKnownTokens().getWethToken();
-        const formattedEth = tokenAmountInUnits(ethBalance, wethToken.decimals, wethToken.displayDecimals);
-        const formattedWeth = tokenAmountInUnits(wethBalance, wethToken.decimals, wethToken.displayDecimals);
-        const formattedTotalEth = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
+        const totalEth = eethBalance.plus(weethBalance);
+        const weethToken = getKnownTokens().getWeethToken();
+        const formattedEth = tokenAmountInUnits(eethBalance, weethToken.decimals, weethToken.displayDecimals);
+        const formattedWeth = tokenAmountInUnits(weethBalance, weethToken.decimals, weethToken.displayDecimals);
+        const formattedTotalEth = tokenAmountInUnits(totalEth, weethToken.decimals, weethToken.displayDecimals);
 
         let content: React.ReactNode;
 
@@ -186,11 +187,11 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
         if (web3State === Web3State.Loading) {
             content = <LoadingWrapper />;
-        } else if (ethBalance && wethBalance) {
+        } else if (eethBalance && weethBalance) {
             content = (
                 <>
                     <Row>
-                        <Label>ECHO</Label>
+                        <Label>EETH</Label>
                         <Value>{formattedEth}</Value>
                     </Row>
                     <Button disabled={isButtonConvertDisable} onClick={this.openModal}>
@@ -199,7 +200,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                     </Button>
                     <Row>
                         <LabelWrapper>
-                            <Label>wECHO</Label>{' '}
+                            <Label>wEETH</Label>{' '}
                             <Tooltip
                                 description="ECHO cannot be traded with other tokens directly.<br />You need to convert it to WECHO first.<br />WECHO can be converted back to ECHO at any time."
                                 iconType={IconType.Fill}
@@ -209,7 +210,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                     </Row>
                     <Row>
                         <Label>Total Value</Label>
-                        <Value>{formattedTotalEth} ECHO</Value>
+                        <Value>{formattedTotalEth} EETH</Value>
                     </Row>
                     <WethModal
                         ethInUsd={ethInUsd}
@@ -219,20 +220,18 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         onSubmit={this.handleSubmit}
                         style={theme.modalTheme}
                         totalEth={totalEth}
-                        wethBalance={wethBalance}
-                        tokenFrom="ECHO"
-                        tokenTo={wethToken.symbol.toLocaleUpperCase()}
-                    />
+                        wethBalance={weethBalance}
+                        tokenFrom="EETH"
+                        tokenTo={weethToken.symbol.toLocaleUpperCase()}/>
                 </>
             );
         }
 
         return (
             <>
-                <Card title={inDropdown ? '' : 'ECHO / wECHO Balances'} className={className}>
+                <Card title={inDropdown ? '' : 'EETH / wEETH Balances'} className={className}>
                     <Content>{content}</Content>
                 </Card>
-              
             </>
         );
     };
@@ -243,7 +242,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         });
 
         try {
-            await this.props.onStartWrapEtherSteps(newWeth);
+            await this.props.onStartWrapEETHSteps(newWeth);
         } finally {
             this.setState({
                 isSubmitting: false,
@@ -276,8 +275,8 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        ethBalance: getEthBalance(state),
-        wethBalance: getWethBalance(state),
+        eethBalance: getEETHBalance(state),
+        weethBalance: getWeethBalance(state),
         web3State: getWeb3State(state),
         ethInUsd: getEthInUsd(state),
         convertBalanceState: getConvertBalanceState(state),
@@ -285,14 +284,14 @@ const mapStateToProps = (state: StoreState): StateProps => {
 };
 
 const mapDispatchToProps = {
-    onStartWrapEtherSteps: startWrapEtherSteps,
+    onStartWrapEETHSteps: startWrapEETHSteps,
 };
 
-const WalletWethBalanceContainer = withTheme(
+const WalletWeethBalanceContainer = withTheme(
     connect(
         mapStateToProps,
         mapDispatchToProps,
-    )(WalletWethBalance),
+    )(WalletWeethBalance),
 );
 
-export { WalletWethBalance, WalletWethBalanceContainer };
+export { WalletWeethBalance, WalletWeethBalanceContainer };

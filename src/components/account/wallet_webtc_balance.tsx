@@ -3,13 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
 
-import { startWrapEtherSteps } from '../../store/actions';
+import { startWrapEBTCSteps } from '../../store/actions';
 import {
     getConvertBalanceState,
-    getEthBalance,
+    getEBTCBalance,
     getEthInUsd,
     getWeb3State,
-    getWethBalance,
+    getWebtcBalance,
 } from '../../store/selectors';
 import { Theme, themeDimensions } from '../../themes/commons';
 import { getKnownTokens } from '../../util/known_tokens';
@@ -23,15 +23,15 @@ import { IconType, Tooltip } from '../common/tooltip';
 import { WethModal } from './wallet_weth_modal';
 
 interface StateProps {
-    ethBalance: BigNumber;
+    ebtcBalance: BigNumber;
     ethInUsd: BigNumber | null;
     web3State: Web3State;
-    wethBalance: BigNumber;
+    webtcBalance: BigNumber;
     convertBalanceState: ConvertBalanceState;
 }
 
 interface DispatchProps {
-    onStartWrapEtherSteps: (newBalance: BigNumber) => Promise<any>;
+    onStartWrapEBTCSteps: (newBalance: BigNumber) => Promise<any>;
 }
 
 interface OwnProps {
@@ -155,7 +155,7 @@ const Note = styled.p`
     text-align: center;
 `;
 
-class WalletWethBalance extends React.PureComponent<Props, State> {
+class WalletWebtcBalance extends React.PureComponent<Props, State> {
     public readonly state: State = {
         modalIsOpen: false,
         selectedWeth: '0',
@@ -164,21 +164,22 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
     public render = () => {
         const {
-            ethBalance,
+            ebtcBalance,
             web3State,
-            wethBalance,
+            webtcBalance,
             ethInUsd,
             theme,
             inDropdown,
             className,
             convertBalanceState,
         } = this.props;
+
         const { isSubmitting } = this.state;
-        const totalEth = ethBalance.plus(wethBalance);
-        const wethToken = getKnownTokens().getWethToken();
-        const formattedEth = tokenAmountInUnits(ethBalance, wethToken.decimals, wethToken.displayDecimals);
-        const formattedWeth = tokenAmountInUnits(wethBalance, wethToken.decimals, wethToken.displayDecimals);
-        const formattedTotalEth = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
+        const totalEth = ebtcBalance.plus(webtcBalance);
+        const webtcToken = getKnownTokens().getWebtcToken();
+        const formattedEth = tokenAmountInUnits(ebtcBalance, webtcToken.decimals, webtcToken.displayDecimals);
+        const formattedWeth = tokenAmountInUnits(webtcBalance, webtcToken.decimals, webtcToken.displayDecimals);
+        const formattedTotalEth = tokenAmountInUnits(totalEth, webtcToken.decimals, webtcToken.displayDecimals);
 
         let content: React.ReactNode;
 
@@ -186,11 +187,11 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
         if (web3State === Web3State.Loading) {
             content = <LoadingWrapper />;
-        } else if (ethBalance && wethBalance) {
+        } else if (ebtcBalance && webtcBalance) {
             content = (
                 <>
                     <Row>
-                        <Label>ECHO</Label>
+                        <Label>EBTC</Label>
                         <Value>{formattedEth}</Value>
                     </Row>
                     <Button disabled={isButtonConvertDisable} onClick={this.openModal}>
@@ -199,7 +200,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                     </Button>
                     <Row>
                         <LabelWrapper>
-                            <Label>wECHO</Label>{' '}
+                            <Label>wEBTC</Label>{' '}
                             <Tooltip
                                 description="ECHO cannot be traded with other tokens directly.<br />You need to convert it to WECHO first.<br />WECHO can be converted back to ECHO at any time."
                                 iconType={IconType.Fill}
@@ -209,7 +210,7 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                     </Row>
                     <Row>
                         <Label>Total Value</Label>
-                        <Value>{formattedTotalEth} ECHO</Value>
+                        <Value>{formattedTotalEth} EBTC</Value>
                     </Row>
                     <WethModal
                         ethInUsd={ethInUsd}
@@ -219,9 +220,9 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
                         onSubmit={this.handleSubmit}
                         style={theme.modalTheme}
                         totalEth={totalEth}
-                        wethBalance={wethBalance}
-                        tokenFrom="ECHO"
-                        tokenTo={wethToken.symbol.toLocaleUpperCase()}
+                        wethBalance={webtcBalance}
+                        tokenFrom="EBTC"
+                        tokenTo={webtcToken.symbol.toLocaleUpperCase()}
                     />
                 </>
             );
@@ -229,10 +230,15 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
         return (
             <>
-                <Card title={inDropdown ? '' : 'ECHO / wECHO Balances'} className={className}>
+                <Card title={inDropdown ? '' : 'EBTC / wEBTC Balances'} className={className}>
                     <Content>{content}</Content>
                 </Card>
-              
+                {inDropdown ? null : (
+                    <Note>
+                        wECHO is used for trades on 0x
+                        <br />1 wECHO = 1 ECHO
+                    </Note>
+                )}
             </>
         );
     };
@@ -243,8 +249,9 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
         });
 
         try {
-            await this.props.onStartWrapEtherSteps(newWeth);
-        } finally {
+            await this.props.onStartWrapEBTCSteps(newWeth);
+        }
+        finally {
             this.setState({
                 isSubmitting: false,
             });
@@ -276,8 +283,8 @@ class WalletWethBalance extends React.PureComponent<Props, State> {
 
 const mapStateToProps = (state: StoreState): StateProps => {
     return {
-        ethBalance: getEthBalance(state),
-        wethBalance: getWethBalance(state),
+        ebtcBalance: getEBTCBalance(state),
+        webtcBalance: getWebtcBalance(state),
         web3State: getWeb3State(state),
         ethInUsd: getEthInUsd(state),
         convertBalanceState: getConvertBalanceState(state),
@@ -285,14 +292,14 @@ const mapStateToProps = (state: StoreState): StateProps => {
 };
 
 const mapDispatchToProps = {
-    onStartWrapEtherSteps: startWrapEtherSteps,
+    onStartWrapEBTCSteps: startWrapEBTCSteps,
 };
 
-const WalletWethBalanceContainer = withTheme(
+const WalletWebtcBalanceContainer = withTheme(
     connect(
         mapStateToProps,
         mapDispatchToProps,
-    )(WalletWethBalance),
+    )(WalletWebtcBalance),
 );
 
-export { WalletWethBalance, WalletWethBalanceContainer };
+export { WalletWebtcBalance, WalletWebtcBalanceContainer };

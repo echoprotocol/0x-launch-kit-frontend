@@ -52,7 +52,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
 
         const title = 'Order setup';
 
-        const confirmCaption = `Confirm on Metamask to ${isBuy ? 'buy' : 'sell'} ${amountOfTokenString}.`;
+        const confirmCaption = `Confirm on Bridge to ${isBuy ? 'buy' : 'sell'} ${amountOfTokenString}.`;
         const loadingCaption = `Processing ${isBuy ? 'buy' : 'sale'} of ${amountOfTokenString}.`;
         const doneCaption = `${isBuy ? 'Buy' : 'Sell'} Order Complete!`;
         const errorCaption = `${isBuy ? 'buying' : 'selling'} ${amountOfTokenString}.`;

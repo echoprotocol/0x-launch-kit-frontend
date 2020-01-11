@@ -136,8 +136,8 @@ interface StateProps {
     baseToken: Token | null;
     quoteToken: Token | null;
     ethAccount: string;
-    baseTokenBalance: TokenBalance | null;
-    quoteTokenBalance: TokenBalance | null;
+    baseTokenBalance: TokenBalance | null | undefined;
+    quoteTokenBalance: TokenBalance | null | undefined;
     totalEthBalance: BigNumber;
 }
 
@@ -169,7 +169,7 @@ const simplifiedTextBoxSmall = () => {
 };
 
 const getWalletName = () => {
-    return 'MetaMask';
+    return 'Bridge';
 };
 
 const getWallet = (web3State: Web3State) => {
@@ -234,9 +234,9 @@ class WalletBalance extends React.Component<Props, State> {
                 baseTokenBalance.token.displayDecimals,
             );
             const toolTip = isWeth(quoteToken.symbol) ? (
-                <TooltipStyled description="Showing ETH + wETH balance" iconType={IconType.Fill} />
+                <TooltipStyled description="Showing ECHO + wECHO balance" iconType={IconType.Fill} />
             ) : null;
-            const quoteTokenLabel = isWeth(quoteToken.symbol) ? 'ETH' : tokenSymbolToDisplayString(currencyPair.quote);
+            const quoteTokenLabel = isWeth(quoteToken.symbol) ? 'ECHO' : tokenSymbolToDisplayString(currencyPair.quote);
             content = (
                 <>
                     <LabelWrapper>
@@ -283,7 +283,7 @@ class WalletBalance extends React.Component<Props, State> {
         if (web3State === Web3State.NotInstalled) {
             content = (
                 <>
-                    <WalletErrorText>Install Metamask wallet to make trades.</WalletErrorText>
+                    <WalletErrorText>Install Bridge wallet to make trades.</WalletErrorText>
                     <ButtonStyled variant={ButtonVariant.Tertiary} onClick={openMetamaskExtensionUrl}>
                         {errorsWallet.mmGetExtension}
                     </ButtonStyled>

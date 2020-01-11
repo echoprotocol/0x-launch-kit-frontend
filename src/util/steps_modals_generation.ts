@@ -1,6 +1,6 @@
 import { BigNumber, SignedOrder } from '0x.js';
 
-import { isWeth, isZrx } from './known_tokens';
+import { isWeth, isZrx, isWeeth, isWebtc } from './known_tokens';
 import {
     Collectible,
     OrderSide,
@@ -10,8 +10,10 @@ import {
     StepToggleTokenLock,
     StepUnlockCollectibles,
     StepWrapEth,
+    StepWrapEeth,
     Token,
     TokenBalance,
+    StepWrapEbtc
 } from './types';
 
 export const createBuySellLimitSteps = (
@@ -19,6 +21,8 @@ export const createBuySellLimitSteps = (
     quoteToken: Token,
     tokenBalances: TokenBalance[],
     wethTokenBalance: TokenBalance,
+    weethTokenBalance: TokenBalance,
+    webtcTokenBalance: TokenBalance,
     amount: BigNumber,
     price: BigNumber,
     side: OrderSide,
@@ -32,9 +36,9 @@ export const createBuySellLimitSteps = (
     unlockBaseOrQuoteTokenStep =
         side === OrderSide.Buy
             ? // If it's a buy -> the quote token has to be unlocked
-              getUnlockTokenStepIfNeeded(quoteToken, tokenBalances, wethTokenBalance)
+            getUnlockTokenStepIfNeeded(quoteToken, tokenBalances, wethTokenBalance, weethTokenBalance, webtcTokenBalance)
             : // If it's a sell -> the base token has to be unlocked
-              getUnlockTokenStepIfNeeded(baseToken, tokenBalances, wethTokenBalance);
+            getUnlockTokenStepIfNeeded(baseToken, tokenBalances, wethTokenBalance, weethTokenBalance, webtcTokenBalance);
 
     if (unlockBaseOrQuoteTokenStep) {
         buySellLimitFlow.push(unlockBaseOrQuoteTokenStep);
@@ -54,7 +58,19 @@ export const createBuySellLimitSteps = (
         if (wrapEthStep) {
             buySellLimitFlow.push(wrapEthStep);
         }
+    } else if (isWeeth(baseToken.symbol) || isWeeth(quoteToken.symbol)) {
+        const wrapEethStep = getWrapEethStepIfNeeded(amount, price, side, weethTokenBalance);
+        if (wrapEethStep) {
+            buySellLimitFlow.push(wrapEethStep);
+        }
+    } else if (isWebtc(baseToken.symbol) || isWebtc(quoteToken.symbol)) {
+        const wrapEethStep = getWrapEbtcStepIfNeeded(amount, price, side, webtcTokenBalance);
+        if (wrapEethStep) {
+            buySellLimitFlow.push(wrapEethStep);
+        }
     }
+
+
 
     buySellLimitFlow.push({
         kind: StepKind.BuySellLimit,
@@ -142,7 +158,11 @@ export const createBuySellMarketSteps = (
     quoteToken: Token,
     tokenBalances: TokenBalance[],
     wethTokenBalance: TokenBalance,
+    weethTokenBalance: TokenBalance,
+    webtcTokenBalance: TokenBalance,
     ethBalance: BigNumber,
+    eethBalance: BigNumber,
+    ebtcBalance: BigNumber,
     amount: BigNumber,
     side: OrderSide,
     price: BigNumber,
@@ -152,18 +172,40 @@ export const createBuySellMarketSteps = (
     const isBuy = side === OrderSide.Buy;
     const tokenToUnlock = isBuy ? quoteToken : baseToken;
 
-    const unlockTokenStep = getUnlockTokenStepIfNeeded(tokenToUnlock, tokenBalances, wethTokenBalance);
+    const unlockTokenStep = getUnlockTokenStepIfNeeded(tokenToUnlock, tokenBalances, wethTokenBalance, weethTokenBalance, webtcTokenBalance);
     // Unlock token step should be added if it:
     // 1) it's a sell, or
     const isSell = unlockTokenStep && side === OrderSide.Sell;
     // 2) is a buy and
     // base token is not weth and is locked, or
     // base token is weth, is locked and there is not enouth plain ETH to fill the order
-    const isBuyWithWethConditions =
-        isBuy &&
-        unlockTokenStep &&
-        (!isWeth(tokenToUnlock.symbol) ||
-            (isWeth(tokenToUnlock.symbol) && ethBalance.isLessThan(amount.multipliedBy(price))));
+
+    let isBuyWithWethConditions = null;
+    if (isWeth(tokenToUnlock.symbol)) {
+        isBuyWithWethConditions =
+            isBuy &&
+            unlockTokenStep &&
+            (!isWeth(tokenToUnlock.symbol) ||
+                (isWeth(tokenToUnlock.symbol) && ethBalance.isLessThan(amount.multipliedBy(price))));
+    }
+
+    if (isWeeth(tokenToUnlock.symbol)) {
+        isBuyWithWethConditions =
+            isBuy &&
+            unlockTokenStep &&
+            (!isWeeth(tokenToUnlock.symbol) ||
+                (isWeeth(tokenToUnlock.symbol) && eethBalance.isLessThan(amount.multipliedBy(price))));
+    }
+
+    if (isWebtc(tokenToUnlock.symbol)) {
+        isBuyWithWethConditions =
+            isBuy &&
+            unlockTokenStep &&
+            (!isWebtc(tokenToUnlock.symbol) ||
+                (isWebtc(tokenToUnlock.symbol) && ebtcBalance.isLessThan(amount.multipliedBy(price))));
+    }
+
+
     if (isSell || isBuyWithWethConditions) {
         buySellMarketFlow.push(unlockTokenStep as Step);
     }
@@ -182,6 +224,16 @@ export const createBuySellMarketSteps = (
         if (wrapEthStep) {
             buySellMarketFlow.push(wrapEthStep);
         }
+    } else if (isWeeth(quoteToken.symbol)) {
+        const wrapEethStep = getWrapEethStepIfNeeded(amount, price, side, weethTokenBalance, eethBalance);
+        if (wrapEethStep) {
+            buySellMarketFlow.push(wrapEethStep);
+        }
+    } else if (isWebtc(quoteToken.symbol)) {
+        const wrapEethStep = getWrapEbtcStepIfNeeded(amount, price, side, webtcTokenBalance, ebtcBalance);
+        if (wrapEethStep) {
+            buySellMarketFlow.push(wrapEethStep);
+        }
     }
 
     buySellMarketFlow.push({
@@ -197,10 +249,14 @@ export const getUnlockTokenStepIfNeeded = (
     token: Token,
     tokenBalances: TokenBalance[],
     wethTokenBalance: TokenBalance,
+    weethTokenBalance: TokenBalance,
+    webtcTokenBalance: TokenBalance,
 ): StepToggleTokenLock | null => {
     const tokenBalance: TokenBalance = isWeth(token.symbol)
-        ? wethTokenBalance
-        : (tokenBalances.find(tb => tb.token.symbol === token.symbol) as TokenBalance);
+        ? wethTokenBalance : isWeeth(token.symbol) ?
+            weethTokenBalance : isWebtc(token.symbol) ?
+                webtcTokenBalance
+                : (tokenBalances.find(tb => tb.token.symbol === token.symbol) as TokenBalance);
     if (tokenBalance.isUnlocked) {
         return null;
     } else {
@@ -261,6 +317,82 @@ export const getWrapEthStepIfNeeded = (
             kind: StepKind.WrapEth,
             currentWethBalance: wethBalance,
             newWethBalance: wethAmountNeeded,
+            context: 'order',
+        };
+    } else {
+        return null;
+    }
+};
+
+export const getWrapEethStepIfNeeded = (
+    amount: BigNumber,
+    price: BigNumber,
+    side: OrderSide,
+    weethTokenBalance: TokenBalance,
+    eethBalance?: BigNumber,
+): StepWrapEeth | null => {
+    if (side === OrderSide.Sell) {
+        return null;
+    }
+
+    const weethAmountNeeded = amount.multipliedBy(price);
+
+    // If we have enough WETH, we don't need to wrap
+    if (weethTokenBalance.balance.isGreaterThan(weethAmountNeeded)) {
+        return null;
+    }
+
+    // Weth needed only if not enough plain ETH to use forwarder
+    if (eethBalance && eethBalance.isGreaterThan(weethAmountNeeded)) {
+        return null;
+    }
+
+    const weethBalance = weethTokenBalance.balance;
+    const deltaWeth = weethBalance.minus(weethAmountNeeded);
+    // Need to wrap eth only if weth balance is not enough
+    if (deltaWeth.isLessThan(0)) {
+        return {
+            kind: StepKind.WrapEeth,
+            currentWeethBalance: weethBalance,
+            newWeethBalance: weethAmountNeeded,
+            context: 'order',
+        };
+    } else {
+        return null;
+    }
+};
+
+export const getWrapEbtcStepIfNeeded = (
+    amount: BigNumber,
+    price: BigNumber,
+    side: OrderSide,
+    webtcTokenBalance: TokenBalance,
+    ebtcBalance?: BigNumber,
+): StepWrapEbtc | null => {
+    if (side === OrderSide.Sell) {
+        return null;
+    }
+
+    const webtcAmountNeeded = amount.multipliedBy(price);
+
+    // If we have enough WETH, we don't need to wrap
+    if (webtcTokenBalance.balance.isGreaterThan(webtcAmountNeeded)) {
+        return null;
+    }
+
+    // Weth needed only if not enough plain ETH to use forwarder
+    if (ebtcBalance && ebtcBalance.isGreaterThan(webtcAmountNeeded)) {
+        return null;
+    }
+
+    const webtcBalance = webtcTokenBalance.balance;
+    const deltaWeth = webtcBalance.minus(webtcAmountNeeded);
+    // Need to wrap eth only if weth balance is not enough
+    if (deltaWeth.isLessThan(0)) {
+        return {
+            kind: StepKind.WrapEbtc,
+            currentWebtcBalance: webtcBalance,
+            newWebtcBalance: webtcAmountNeeded,
             context: 'order',
         };
     } else {

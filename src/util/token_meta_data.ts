@@ -4,9 +4,9 @@ import { TokenMetaData } from '../common/tokens_meta_data';
 import { Token } from './types';
 
 export const getWethTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenMetaData[]): Token => {
-    const tokenMetaData = tokensMetaData.find(t => t.symbol === 'weth');
+    const tokenMetaData = tokensMetaData.find(t => t.symbol === 'wecho');
     if (!tokenMetaData) {
-        throw new Error('WETH Token MetaData not found');
+        throw new Error('wecho Token MetaData not found');
     }
     return {
         address: tokenMetaData.addresses[NETWORK_ID],
@@ -16,6 +16,40 @@ export const getWethTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenM
         primaryColor: tokenMetaData.primaryColor,
         icon: tokenMetaData.icon,
         displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
+    };
+};
+
+export const getWeethTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenMetaData[]): Token => {
+    const tokenMetaData = tokensMetaData.find(t => t.symbol === 'weeth');
+    if (!tokenMetaData) {
+        throw new Error('wecho Token MetaData not found');
+    }
+    return {
+        address: tokenMetaData.addresses[NETWORK_ID],
+        symbol: tokenMetaData.symbol,
+        decimals: tokenMetaData.decimals,
+        name: tokenMetaData.name,
+        primaryColor: tokenMetaData.primaryColor,
+        icon: tokenMetaData.icon,
+        displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
+        assetId: tokenMetaData.assetId,
+    };
+};
+
+export const getWebtcTokenFromTokensMetaDataByNetworkId = (tokensMetaData: TokenMetaData[]): Token => {
+    const tokenMetaData = tokensMetaData.find(t => t.symbol === 'webtc');
+    if (!tokenMetaData) {
+        throw new Error('wecho Token MetaData not found');
+    }
+    return {
+        address: tokenMetaData.addresses[NETWORK_ID],
+        symbol: tokenMetaData.symbol,
+        decimals: tokenMetaData.decimals,
+        name: tokenMetaData.name,
+        primaryColor: tokenMetaData.primaryColor,
+        icon: tokenMetaData.icon,
+        displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
+        assetId: tokenMetaData.assetId,
     };
 };
 
@@ -32,7 +66,10 @@ export const mapTokensMetaDataToTokenByNetworkId = (tokensMetaData: TokenMetaDat
                     primaryColor: tokenMetaData.primaryColor,
                     icon: tokenMetaData.icon,
                     displayDecimals: tokenMetaData.displayDecimals || UI_DECIMALS_DISPLAYED_DEFAULT_PRECISION,
+                    assetId: tokenMetaData.assetId,
                 };
             },
         );
 };
+
+

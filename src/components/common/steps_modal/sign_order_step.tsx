@@ -43,7 +43,7 @@ class SignOrderStep extends React.Component<Props, State> {
         const isBuy = step.side === OrderSide.Buy;
 
         const title = 'Order setup';
-        const confirmCaption = 'Confirm signature on Metamask to submit order to the book.';
+        const confirmCaption = 'Confirm signature on Bridge to submit order to the book.';
         const loadingCaption = 'Submitting order.';
         const doneCaption = `${isBuy ? 'Buy' : 'Sell'} order for ${tokenSymbolToDisplayString(
             step.token.symbol,
@@ -79,6 +79,7 @@ class SignOrderStep extends React.Component<Props, State> {
             onDone();
         } catch (error) {
             let errorException = error;
+            error.message = error.message || error.error;
             if (error.message.toLowerCase() === INSUFFICIENT_MAKER_BALANCE_ERR.toLowerCase()) {
                 // Maker balance not enough
                 errorException = new InsufficientTokenBalanceException(step.token.symbol);

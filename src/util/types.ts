@@ -16,9 +16,8 @@ export interface TabItem {
 
 export enum Network {
     Mainnet = 1,
-    Rinkeby = 4,
-    Kovan = 42,
-    Ganache = 50,
+    Testnet = 3,
+    Devnet = 4,
 }
 
 export interface Token {
@@ -29,6 +28,7 @@ export interface Token {
     primaryColor: string;
     icon?: string;
     displayDecimals: number;
+    assetId?: string;
 }
 
 export interface TokenBalance {
@@ -40,7 +40,9 @@ export interface TokenBalance {
 export interface SearchTokenBalanceObject {
     tokenBalances: TokenBalance[];
     tokenToFind: Token | null;
-    wethTokenBalance: TokenBalance | null;
+    wethTokenBalance?: TokenBalance | null;
+    weethTokenBalance?: TokenBalance | null;
+    webtcTokenBalance?: TokenBalance | null;
 }
 
 export enum Web3State {
@@ -52,11 +54,16 @@ export enum Web3State {
 }
 
 export interface BlockchainState {
+    readonly echoAccountName: string;
     readonly ethAccount: string;
     readonly web3State: Web3State;
     readonly tokenBalances: TokenBalance[];
     readonly ethBalance: BigNumber;
+    readonly eethBalance: BigNumber;
+    readonly ebtcBalance: BigNumber;
     readonly wethTokenBalance: TokenBalance | null;
+    readonly weethTokenBalance: TokenBalance | null;
+    readonly webtcTokenBalance: TokenBalance | null;
     readonly gasInfo: GasInfo;
     readonly convertBalanceState: ConvertBalanceState;
 }
@@ -98,6 +105,8 @@ export enum StepKind {
     UnlockCollectibles = 'UnlockCollectibles',
     SellCollectible = 'SellCollectible',
     BuyCollectible = 'BuyCollectible',
+    WrapEeth = 'WrapEeth',
+    WrapEbtc = 'WrapEbtc',
 }
 
 export interface StepWrapEth {
@@ -106,6 +115,21 @@ export interface StepWrapEth {
     newWethBalance: BigNumber;
     context: 'order' | 'standalone';
 }
+
+export interface StepWrapEeth {
+    kind: StepKind.WrapEeth;
+    currentWeethBalance: BigNumber;
+    newWeethBalance: BigNumber;
+    context: 'order' | 'standalone';
+}
+
+export interface StepWrapEbtc {
+    kind: StepKind.WrapEbtc;
+    currentWebtcBalance: BigNumber;
+    newWebtcBalance: BigNumber;
+    context: 'order' | 'standalone';
+}
+
 
 export interface StepToggleTokenLock {
     kind: StepKind.ToggleTokenLock;
@@ -151,7 +175,9 @@ export interface StepBuyCollectible {
 }
 
 export type Step =
+    | StepWrapEbtc
     | StepWrapEth
+    | StepWrapEeth
     | StepToggleTokenLock
     | StepBuySellLimitOrder
     | StepBuySellMarket
@@ -265,7 +291,7 @@ export interface GasInfo {
 }
 
 export enum ModalDisplay {
-    InstallMetamask = 'INSTALL_METAMASK',
+    InstallMetamask = 'INSTALL_BRIDGE',
     EnablePermissions = 'ACCEPT_PERMISSIONS',
 }
 

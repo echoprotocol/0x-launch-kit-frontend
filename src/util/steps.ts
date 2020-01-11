@@ -12,6 +12,10 @@ export const getStepTitle = (step: Step): string => {
             return step.isUnlocked ? 'Lock' : 'Unlock';
         case StepKind.WrapEth:
             return 'Convert';
+        case StepKind.WrapEeth:
+            return 'Convert';
+        case StepKind.WrapEbtc:
+            return 'Convert';
         case StepKind.BuyCollectible:
             return 'Buy';
         default:
@@ -29,6 +33,8 @@ export const isLongStep = (step: Step): boolean => {
         case StepKind.ToggleTokenLock:
         case StepKind.UnlockCollectibles:
         case StepKind.WrapEth:
+        case StepKind.WrapEeth:
+        case StepKind.WrapEbtc:
         case StepKind.BuyCollectible:
             return true;
         default:
